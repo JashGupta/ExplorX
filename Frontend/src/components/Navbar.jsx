@@ -76,7 +76,7 @@ const Navbar = () => {
             onClick={openSignIn}
             className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${
               isScrolled
-                ? "text-white bg-emerald-800 hover:bg-emerald-950/90"
+                ? "text-white bg-emerald-950 hover:bg-emerald-950/80"
                 : "bg-white text-emerald-950 hover:bg-emerald-50"
             }`}
           >

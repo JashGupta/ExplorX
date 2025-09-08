@@ -1,8 +1,13 @@
 import User from "../models/userModel.js";
 import { Webhook } from "svix";
 
+console.log("Webhook endpoint reached!");
+
 const clerkWebhooks = async (req, res) => {
   try {
+     
+    console.log("Webhook hit!", req.body);
+
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
     const headers = {
@@ -12,6 +17,7 @@ const clerkWebhooks = async (req, res) => {
     };
 
     await whook.verify(JSON.stringify(req.body), headers);
+    console.log("Webhook verified!");
 
     const { data, type } = req.body;
 
@@ -19,13 +25,16 @@ const clerkWebhooks = async (req, res) => {
       _id: data.id,
       email: data.email_addresses[0].email_address,
       username: data.first_name + " " + data.last_name,
-      image: data.image,
+      image: data.image_url,
     };
 
+    console.log("Received Clerk event:", type, userData)
+
     switch (type) {
-      case "user.breated":
+      case "user.created":
         {
-          await User.create(userData);
+          const user = await User.create(userData);
+          console.log(user);
           break;
         }
 
@@ -44,7 +53,7 @@ const clerkWebhooks = async (req, res) => {
       default:
         break;
     }
-    res.json({sucess: true, message: "WebHook recieved"});
+    res.json({sucess: true, message: "Webhook recieved"});
   } catch (error) {
     console.log(error.message); 
     res.json({sucess: false, message: error.message});
