@@ -10,7 +10,7 @@ const AllHotels = () => {
 
   return (
     <>
-      <div className="min-h-screen text-emerald-950 mx-auto px-6 sm:px-10 lg:px-16 py-10 pt-32">
+      <div className="min-h-screen text-emerald-950 px-6 sm:px-10 lg:px-16 py-10 pt-32">
         {/*Phone Filters */}
         <div className="md:hidden pb-3">
           <div className="flex justify-around items-center border-b border-emerald-950 pb-2 mb-4">

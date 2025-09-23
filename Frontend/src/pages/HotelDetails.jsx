@@ -17,7 +17,7 @@ const RoomDetails = () => {
   }
 
   return (
-    <div className="mx-auto px-6 sm:px-10 lg:px-16 py-10 pt-32">
+    <div className="px-6 sm:px-10 lg:px-16 py-10 pt-32">
       {/* Title + Rating */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
