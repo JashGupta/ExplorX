@@ -7,7 +7,7 @@ export const createRoom = async (req, res) => {
         const {roomType, pricePerNight, amenities} = req.body;
         const hotel = await Hotel.findOne({owner: req.user._id});
         if(!hotel) {
-            return res.json({sucess: false, message: "Hotel not found"});
+            return res.json({success: false, message: "Hotel not found"});
         }
         const uploadImages = req.files.map(async (file) => {
             const response = await cloudinary.uploader.upload(file.path);
