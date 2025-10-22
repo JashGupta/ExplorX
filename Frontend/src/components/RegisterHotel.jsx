@@ -12,12 +12,12 @@ const RegisterHotel = () => {
 
   const {setShowHotelReg, setIsOwner, axios, getToken} = useAppContext();
 
-  const submitHandler = (e) => {
+  const submitHandler = async(e) => {
     try {
       e.preventDefault();
-      const {data} = axios.post('/api/hotels/register', {name, contact, address, city}, {
+      const {data} = await axios.post('/api/hotels/register', {name, contact, address, city}, {
         headers: {
-          Authorization: `Bearer ${getToken()}`
+          Authorization: `Bearer ${await getToken()}`
         }
       });
       if(data.success) {

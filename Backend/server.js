@@ -15,9 +15,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(clerkMiddleware());
 
-app.use("/api/clerk", clerkWebhooks);
+app.post("/api/clerk", express.raw({ type: "application/json" }), clerkWebhooks);
+app.use(clerkMiddleware());
 
 app.get("/", (req, res) => res.send("Backend is working!"));
 app.use("/api/user", userRouter);
