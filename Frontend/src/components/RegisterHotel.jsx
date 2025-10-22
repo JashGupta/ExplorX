@@ -20,7 +20,7 @@ const RegisterHotel = () => {
   };
 
   return (
-    <div className="absolute z-10 flex w-full h-full justify-center items-center backdrop-blur-xs bg-black/30">
+    <div className="fixed z-10 flex w-full h-full justify-center items-center backdrop-blur-sm bg-black/30">
       <div className="flex flex-col md:flex-row h-auto rounded-lg overflow-hidden shadow-md my-6 md:w-[70%] relative">
 
         <button

@@ -1,5 +1,4 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useState } from "react";
 import {Toaster} from "react-hot-toast";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
@@ -13,17 +12,18 @@ import OwnerDashboard from "./pages/hotelOwner/OwnerDashboard";
 import OwnerAddRoom from "./pages/hotelOwner/OwnerAddRoom";
 import OwnerListRoom from "./pages/hotelOwner/OwnerListRoom";
 import OwnerSidebar from "./components/hotelOwner/OwnerSidebar";
+import { useAppContext } from "./context/AppContext";
 
 function App() {
   const location = useLocation();
   const isOwner = location.pathname.startsWith("/owner");
-  const [registerHotel] = useState(false);
+  const {showHotelReg} = useAppContext();
 
   return (
     <>
       <div className="min-h-screen flex flex-col">
         <Toaster />
-        {registerHotel && <RegisterHotel />}
+        {showHotelReg && <RegisterHotel />}
         {isOwner ? (
           <div>
             <OwnerNavbar />
