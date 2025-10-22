@@ -36,10 +36,8 @@ const RegisterHotel = () => {
   };
 
     const handleImageChange = (e) => {
-    const urls = Array.from(e.target.files).map((file) =>
-      URL.createObjectURL(file)
-    );
-    setImages(urls.slice(0, 4));
+    const files = Array.from(e.target.files).slice(0, 4);
+    setImages(files);
   };
 
   const submitHandler = async (e) => {

@@ -9,7 +9,7 @@ const hotelSchema = new mongoose.Schema(
     startingPrice: { type: Number, required: false },
     rating: { type: Number, min: 0, max: 5, default: 0 },
     reviews: { type: Number, default: 0 },
-    images: [String],
+    images: [{String}],
     amenities: [String],
     policies: [String],
     offer: { type: String },
