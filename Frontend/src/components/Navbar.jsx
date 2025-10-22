@@ -5,6 +5,7 @@ import { RiMenu3Line } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
 import { IoCalendarOutline } from "react-icons/io5";
 import { useClerk, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { useAppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const navLinks = [
@@ -18,6 +19,8 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { openSignIn } = useClerk();
   const location = useLocation();
+
+  const {user, isOwner, navigate , setShowHotelReg} = useAppContext(); 
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -57,13 +60,16 @@ const Navbar = () => {
             {link.name}
           </a>
         ))}
-        <button
+        {user && <button
           className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${
             isScrolled ? "" : "text-white "
           } transition-all`}
+           onClick={() => {
+            isOwner ? navigate('/owner/dashboard') : setShowHotelReg(true);
+           }}
         >
-          Dashboard
-        </button>
+          {isOwner ? "Dashboard" : "List you Hotel"}
+        </button>}
       </div>
 
       {/* Desktop Right */}
@@ -134,9 +140,13 @@ const Navbar = () => {
           </a>
         ))}
 
-        <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
-          Dashb oard
-        </button>
+        {user && <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
+        onClick={() => {
+          isOwner ? navigate('/owner/dashboard') : setShowHotelReg(true);
+           setIsMenuOpen(false);
+        }}>
+          {isOwner ? "Dashboard" : "List you Hotel"}
+        </button>}
 
         <SignedOut>
           <button

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
+import { useAppContext } from "../context/AppContext";
 
 const RegisterHotel = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const RegisterHotel = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const {setShowHotelReg} = useAppContext();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Hotel Registered:", formData);
@@ -24,7 +27,8 @@ const RegisterHotel = () => {
       <div className="flex flex-col md:flex-row h-auto rounded-lg overflow-hidden shadow-md my-6 md:w-[70%] relative">
 
         <button
-          className="absolute top-4 right-4 text-gray-600 hover:text-black"
+          className="absolute md:top-4 right-4 top-26 text-gray-600 hover:text-black"
+          onClick={() => {setShowHotelReg(false)}}
         >
           <IoClose size={24}/>
         </button>
