@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useState } from "react";
+import {Toaster} from "react-hot-toast";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -21,6 +22,7 @@ function App() {
   return (
     <>
       <div className="min-h-screen flex flex-col">
+        <Toaster />
         {registerHotel && <RegisterHotel />}
         {isOwner ? (
           <div>
