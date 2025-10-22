@@ -1,25 +1,35 @@
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const RegisterHotel = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-  });
+  
+  const [name, setName] = useState("");
+  const [contact, setContact] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {setShowHotelReg, setIsOwner, axios, getToken} = useAppContext();
 
-  const {setShowHotelReg} = useAppContext();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Hotel Registered:", formData);
-    alert("Hotel registered successfully ✅");
+  const submitHandler = (e) => {
+    try {
+      e.preventDefault();
+      const {data} = axios.post('/api/hotels/register', {name, contact, address, city}, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      });
+      if(data.success) {
+        toast.success(data.message);
+        setIsOwner(true);
+        setShowHotelReg(false);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Error registering hotel : " + error.message);
+    }
   };
 
   return (
@@ -44,7 +54,7 @@ const RegisterHotel = () => {
 
         <div className="md:w-1/2 w-full flex items-center justify-center bg-white p-6">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={submitHandler}
             className="w-full max-w-sm flex flex-col gap-3"
           >
             <h2 className="text-xl text-center font-bold text-gray-800">
@@ -62,23 +72,23 @@ const RegisterHotel = () => {
                 type="text"
                 name="name"
                 placeholder="Hotel Name"
-                value={formData.name}
-                onChange={handleChange}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
                 className="border rounded-md p-2 text-sm focus:outline-none"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label htmlFor="phone" className="text-sm font-medium">
-                Phone
+              <label htmlFor="contact" className="text-sm font-medium">
+                Contact
               </label>
               <input
                 type="text"
-                name="phone"
-                placeholder="Phone"
-                value={formData.phone}
-                onChange={handleChange}
+                name="contact"
+                placeholder="Contact Number"
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
                 required
                 className="border rounded-md p-2 text-sm focus:outline-none"
               />
@@ -92,8 +102,8 @@ const RegisterHotel = () => {
                 type="text"
                 name="address"
                 placeholder="Hotel Address"
-                value={formData.address}
-                onChange={handleChange}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
                 required
                 className="border rounded-md p-2 text-sm focus:outline-none"
               />
@@ -105,8 +115,8 @@ const RegisterHotel = () => {
               </label>
               <select
                 name="city"
-                value={formData.city}
-                onChange={handleChange}
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
                 required
                 className="border rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
