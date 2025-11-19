@@ -3,8 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
 import { RiMenu3Line } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
-import { IoCalendarOutline } from "react-icons/io5";
-import { useClerk, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { useAppContext } from "../context/AppContext";
 
 const Navbar = () => {
@@ -17,10 +15,17 @@ const Navbar = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { openSignIn } = useClerk();
+
   const location = useLocation();
 
-  const {user, isOwner, navigate , setShowHotelReg} = useAppContext(); 
+  const {
+    user,
+    logout,
+    setShowLogin,
+    isOwner,
+    navigate,
+    setShowHotelReg,
+  } = useAppContext();
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -60,26 +65,32 @@ const Navbar = () => {
             {link.name}
           </a>
         ))}
-        {user && <button
-          className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${
-            isScrolled ? "" : "text-white "
-          } transition-all`}
-           onClick={() => {
-            isOwner ? navigate('/owner/dashboard') : setShowHotelReg(true);
-           }}
-        >
-          {isOwner ? "Dashboard" : "List you Hotel"}
-        </button>}
+
+        {user && (
+          <button
+            className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${
+              isScrolled ? "" : "text-white"
+            } transition-all`}
+            onClick={() => {
+              isOwner
+                ? navigate("/owner/dashboard")
+                : setShowHotelReg(true);
+            }}
+          >
+            {isOwner ? "Dashboard" : "List your Hotel"}
+          </button>
+        )}
       </div>
 
       {/* Desktop Right */}
       <div className="hidden md:flex items-center gap-4">
         <IoIosSearch
           className={`text-2xl ${isScrolled ? "" : "text-white"}`}
-        ></IoIosSearch>
-        <SignedOut>
+        />
+
+        {!user ? (
           <button
-            onClick={openSignIn}
+            onClick={() => setShowLogin(true)}
             className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${
               isScrolled
                 ? "text-white bg-emerald-950 hover:bg-emerald-950/80"
@@ -88,37 +99,26 @@ const Navbar = () => {
           >
             Login
           </button>
-        </SignedOut>
-        <SignedIn>
-          <UserButton>
-            <UserButton.MenuItems>
-              <UserButton.Link
-                label="My Bookings"
-                href="/my-bookings"
-                labelIcon={<IoCalendarOutline />}
-              />
-            </UserButton.MenuItems>
-          </UserButton>
-        </SignedIn>
+        ) : (
+          <button
+            onClick={logout}
+            className={`px-6 py-2 rounded-full transition-all duration-500 ${
+              isScrolled
+                ? "bg-emerald-900 text-white"
+                : "bg-white text-emerald-900"
+            }`}
+          >
+            Logout
+          </button>
+        )}
       </div>
 
       {/* Mobile Menu Button */}
       <div className="flex items-center gap-3 md:hidden">
-        <SignedIn>
-          <UserButton>
-            <UserButton.MenuItems>
-              <UserButton.Link
-                label="My Bookings"
-                href="/mybookings"
-                labelIcon={<IoCalendarOutline />}
-              />
-            </UserButton.MenuItems>
-          </UserButton>
-        </SignedIn>
         <RiMenu3Line
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className={`h-5 w-5 ${isScrolled ? " " : "invert"}`}
-        ></RiMenu3Line>
+          className={`h-5 w-5 ${isScrolled ? "" : "invert"}`}
+        />
       </div>
 
       {/* Mobile Menu */}
@@ -128,36 +128,60 @@ const Navbar = () => {
         }`}
       >
         <button
-          className="absolute top-8  right-4"
+          className="absolute top-8 right-4"
           onClick={() => setIsMenuOpen(false)}
         >
-          <IoMdClose className="h-5 w-5"></IoMdClose>
+          <IoMdClose className="h-5 w-5" />
         </button>
 
         {navLinks.map((link, i) => (
-          <a key={i} href={link.path} onClick={() => setIsMenuOpen(false)}>
+          <a
+            key={i}
+            href={link.path}
+            onClick={() => setIsMenuOpen(false)}
+          >
             {link.name}
           </a>
         ))}
 
-        {user && <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
-        onClick={() => {
-          isOwner ? navigate('/owner/dashboard') : setShowHotelReg(true);
-           setIsMenuOpen(false);
-        }}>
-          {isOwner ? "Dashboard" : "List you Hotel"}
-        </button>}
-
-        <SignedOut>
+        {user && (
           <button
-            onClick={openSignIn}
+            className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
+            onClick={() => {
+              isOwner
+                ? navigate("/owner/dashboard")
+                : setShowHotelReg(true);
+              setIsMenuOpen(false);
+            }}
+          >
+            {isOwner ? "Dashboard" : "List your Hotel"}
+          </button>
+        )}
+
+        {!user ? (
+          <button
+            onClick={() => {
+              navigate("/login");
+              setIsMenuOpen(false);
+            }}
             className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500"
           >
             Login
           </button>
-        </SignedOut>
+        ) : (
+          <button
+            onClick={() => {
+              logout();
+              setIsMenuOpen(false);
+            }}
+            className="bg-black text-white px-8 py-2.5 rounded-full"
+          >
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );
 };
+
 export default Navbar;

@@ -1,9 +1,8 @@
 import express from "express";
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
 import cors from "cors";
-import { clerkMiddleware } from "@clerk/express";
 import connectToDb from "./DB/db.js";
-import clerkWebhooks from "./controllers/clerkWebhooks.js";
 import userRouter from "./routes/userRouter.js";
 import hotelRouter from "./routes/hotelRouter.js";
 import connectCloudinary from "./configs/cloudinary.js";
@@ -13,23 +12,8 @@ connectToDb();
 connectCloudinary();
 const app = express();
 
-app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-}));
-
-app.options("*", cors());
-
+app.use(cors());
 app.use(express.json());
-
-app.post(
-    "/api/clerk",
-    express.raw({ type: "application/json" }),
-    clerkWebhooks
-);
-
-app.use(clerkMiddleware());
 
 app.get("/", (req, res) => res.send("Backend is working!"));
 

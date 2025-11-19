@@ -13,17 +13,21 @@ import OwnerAddRoom from "./pages/hotelOwner/OwnerAddRoom";
 import OwnerListRoom from "./pages/hotelOwner/OwnerListRoom";
 import OwnerSidebar from "./components/hotelOwner/OwnerSidebar";
 import { useAppContext } from "./context/AppContext";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
 
 function App() {
   const location = useLocation();
   const isOwner = location.pathname.startsWith("/owner");
-  const {showHotelReg} = useAppContext();
+  const {showLogin, showRegister, showHotelReg} = useAppContext();
 
   return (
     <>
       <div className="min-h-screen flex flex-col">
         <Toaster />
         {showHotelReg && <RegisterHotel />}
+        {showLogin && <LoginForm />}
+        {showRegister && <RegisterForm />}
         {isOwner ? (
           <div>
             <OwnerNavbar />
@@ -34,6 +38,7 @@ function App() {
         )}
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="/hotels" element={<AllHotels />} />
           <Route path="/hotels/:id" element={<HotelDetails />} />
           <Route path="/my-bookings" element={<MyBookings />} />

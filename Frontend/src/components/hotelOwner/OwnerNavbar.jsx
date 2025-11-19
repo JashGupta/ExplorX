@@ -1,4 +1,3 @@
-import { UserButton } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 
 const OwnerNavbar = () => {
@@ -8,7 +7,6 @@ const OwnerNavbar = () => {
         <img src={"/logo.png"} alt="logo" className="h-16" />
       </Link>
 
-      <UserButton />
     </nav>
   );
 };

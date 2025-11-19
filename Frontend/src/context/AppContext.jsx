@@ -1,8 +1,7 @@
-import axios from 'axios';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useUser, useAuth } from '@clerk/clerk-react';
-import {toast} from 'react-hot-toast';
+import axios from "axios";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -10,63 +9,95 @@ const AppContext = createContext();
 
 // eslint-disable-next-line react/prop-types
 export const AppProvider = ({ children }) => {
+  const currency = import.meta.env.VITE_CURRENCY || "₹";
+  const navigate = useNavigate();
 
-    const currency = import.meta.env.VITE_CURRENCY || '$';
-    const navigate = useNavigate();
-    const {user} = useUser();
-    const {getToken} = useAuth();
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
 
-    const [isOwner, setIsOwner] = useState(false);
-    const [showHotelReg, setShowHotelReg] = useState(false);
-    const [searchedCities, setSearchedCities] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
-    const fetchUser = async () => {
-        try {
-            const {data} = await axios.get('/api/user', {
-                headers: {
-                    Authorization: `Bearer ${await getToken()}`
-                }
-            });
-            if(data.success) {
-                setIsOwner(data.role === "hotelOwner");
-                setSearchedCities(data.recentSearchedCities);
-            } else {
-                setTimeout( () => {
-                    fetchUser();
-                }, 5000);
-            }
-        } catch (error) {
-            toast.error("Error fetching user data : " + error.message);
-        }
+  const [showHotelReg, setShowHotelReg] = useState(false);
+
+  const [searchedCities, setSearchedCities] = useState([]);
+
+  /** ✅ Attach Token Automatically **/
+  useEffect(() => {
+    axios.interceptors.request.use(function (config) {
+      const token = localStorage.getItem("token");
+      if (token) config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
+  }, [token]);
+
+  /** ✅ Fetch User If Token Exists **/
+  const fetchUser = async () => {
+    if (!token) {
+    return;
+  }
+
+    try {
+      const { data } = await axios.get("/api/user");
+
+      if (data.success) {
+        setUser(data.user);
+        setIsOwner(data.user.role === "hotelOwner");
+        setSearchedCities(data.user.recentSearchedCities || []);
+      }
+    } catch (error) {
+        console.log("error", error);
+        
+      toast.error("Session expired. Please login again.", error);
+      logout();
     }
+  };
 
-    useEffect( () => {
-        if(user) {
-            fetchUser();
-        }
-    }, [user]);
+  useEffect(() => {
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
-    const value = {
-        currency,
-        navigate,
-        axios,
-        user,
-        getToken,
-        isOwner,
-        setIsOwner,
-        showHotelReg,
-        setShowHotelReg,
-        searchedCities,
-        setSearchedCities
-    }
+  /** ✅ Logout **/
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    setUser(null);
+    navigate("/");
+  };
 
-    return (
-        <AppContext.Provider value={value}>
-            {children}
-        </AppContext.Provider>
-    )
+  const value = {
+    currency,
+    navigate,
+    axios,
 
-}
+    token,
+    setToken,
+
+    user,
+    setUser,
+
+    logout,
+
+    showLogin,
+    setShowLogin,
+
+    showRegister,
+    setShowRegister,
+
+    showHotelReg,
+    setShowHotelReg,
+
+    isOwner,
+    setIsOwner,
+
+    searchedCities,
+    setSearchedCities,
+  };
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = () => useContext(AppContext);
