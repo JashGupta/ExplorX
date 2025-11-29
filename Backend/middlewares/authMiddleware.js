@@ -6,7 +6,7 @@ export const authMiddleware = async (req, res, next) => {
         const authHeader = req.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({
+            return res.json({
                 success: false,
                 message: "Not authorized, no token",
             });
@@ -19,7 +19,7 @@ export const authMiddleware = async (req, res, next) => {
         const user = await User.findById(decoded.id);
 
         if (!user) {
-            return res.status(404).json({
+            return res.json({
                 success: false,
                 message: "User not found",
             });
@@ -28,7 +28,7 @@ export const authMiddleware = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        res.status(401).json({
+        res.json({
             success: false,
             message: "Invalid token",
         });

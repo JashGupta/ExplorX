@@ -4,6 +4,7 @@ import User from "../models/userModel.js";
 
 export const registerHotel = async (req, res) => {
   try {
+    const owner = req.user._id;
 
     const hotel = await Hotel.findOne({ owner });
     if (hotel) {
