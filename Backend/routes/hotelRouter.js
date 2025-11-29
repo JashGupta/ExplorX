@@ -5,6 +5,6 @@ import upload from '../middlewares/uploadMiddleware.js';
 
 const hotelRouter = express.Router();
 
-hotelRouter.post('/register', upload.array('images', 4), authMiddleware, registerHotel);
+hotelRouter.post('/register',authMiddleware, upload.array('images', 4), registerHotel);
 
 export default hotelRouter;

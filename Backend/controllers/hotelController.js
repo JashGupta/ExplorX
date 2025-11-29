@@ -1,9 +1,9 @@
+import { v2 as cloudinary } from "cloudinary";
 import Hotel from "../models/hotelModel.js";
 import User from "../models/userModel.js";
 
 export const registerHotel = async (req, res) => {
   try {
-    const owner = req.user._id;
 
     const hotel = await Hotel.findOne({ owner });
     if (hotel) {
@@ -12,7 +12,10 @@ export const registerHotel = async (req, res) => {
 
     const uploadImages = req.files.map(async (file) => {
       const response = await cloudinary.uploader.upload(file.path);
-      return response.secure_url;
+      return {
+        url: response.secure_url,
+        public_id: response.public_id,
+      }
     });
     const images = await Promise.all(uploadImages);
 

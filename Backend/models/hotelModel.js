@@ -9,12 +9,20 @@ const hotelSchema = new mongoose.Schema(
     startingPrice: { type: Number, required: false },
     rating: { type: Number, min: 0, max: 5, default: 0 },
     reviews: { type: Number, default: 0 },
-    images: [{String}],
+    images: [
+      {
+        url: { type: String, required: true },
+        public_id: { type: String, required: true },
+      },
+    ],
     amenities: [String],
     policies: [String],
     offer: { type: String },
     owner: { type: String, ref: "User" },
-    rooms: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }], default: [] },
+    rooms: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
+      default: [],
+    },
     host: {
       name: String,
       profilePic: String,

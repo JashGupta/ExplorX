@@ -13,4 +13,4 @@ userRouter.post("/login", loginUser);
 
 userRouter.post("/store-recent-search", authMiddleware, storeRecentSearchedCities)
 
-export default userRouter
+export default userRouter;

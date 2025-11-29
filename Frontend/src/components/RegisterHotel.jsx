@@ -42,27 +42,33 @@ const RegisterHotel = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    try {
-      const hotelData = {
-        name,
-        contact,
-        address,
-        city,
-        startingPrice,
-        rating,
-        reviews,
-        offer,
-        amenities,
-        policies: (policies || "")
-          .split(",")
-          .map((p) => p.trim())
-          .filter(Boolean),
-        images,
-      };
 
-      const { data } = await axios.post("/api/hotels/register", hotelData, {
+    try {
+      const formData = new FormData();
+
+      formData.append("name", name);
+      formData.append("contact", contact);
+      formData.append("address", address);
+      formData.append("city", city);
+      formData.append("startingPrice", startingPrice);
+      formData.append("rating", rating);
+      formData.append("reviews", reviews);
+      formData.append("offer", offer);
+
+      amenities.forEach((a) => formData.append("amenities[]", a));
+
+      policies
+        .split(",")
+        .map((p) => p.trim())
+        .filter(Boolean)
+        .forEach((p) => formData.append("policies[]", p));
+
+      images.forEach((img) => formData.append("images", img));
+
+      const { data } = await axios.post("/api/hotels/register", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -81,7 +87,6 @@ const RegisterHotel = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm pt-20">
       <div className="relative w-full max-w-5xl bg-white/30 backdrop-blur-xl border border-white/30 rounded-2xl shadow-2xl p-6 md:p-8 text-white overflow-y-auto max-h-[85vh] animate-fadeIn">
-
         {/* Close Button */}
         <button
           onClick={() => setShowHotelReg(false)}
@@ -98,8 +103,10 @@ const RegisterHotel = () => {
           Add your hotel details to reach thousands of travelers
         </p>
 
-        <form onSubmit={submitHandler} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
+        <form
+          onSubmit={submitHandler}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+        >
           {/* Hotel Name */}
           <div>
             <label className="text-sm mb-1 block">Hotel Name</label>
@@ -224,7 +231,9 @@ const RegisterHotel = () => {
 
           {/* Policies */}
           <div className="sm:col-span-2">
-            <label className="text-sm mb-1 block">Policies (comma separated)</label>
+            <label className="text-sm mb-1 block">
+              Policies (comma separated)
+            </label>
             <textarea
               value={policies}
               onChange={(e) => setPolicies(e.target.value)}
