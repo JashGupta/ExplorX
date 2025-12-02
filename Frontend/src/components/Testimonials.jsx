@@ -102,17 +102,17 @@ const Testimonials = () => {
             <img
               src="person-2.jpg"
               alt="image"
-              className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-[2] object-cover"
+              className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-2 object-cover"
             />
             <img
               src="person-3.jpg"
               alt="image"
-              className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-[3] object-cover"
+              className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-3 object-cover"
             />
             <img
               src="person-4.jpg"
               alt="image"
-              className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-[4] object-cover"
+              className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-4 object-cover"
             />
           </div>
           <div className="pl-3">
