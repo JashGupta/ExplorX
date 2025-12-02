@@ -3,7 +3,7 @@ const ContactUs = () => {
     <>
       <div
         id="contact"
-        className="w-full py-16 px-6 md:px-12 bg-white bg-gradient-to-b from-white to-emerald-50"
+        className="w-full py-16 px-6 md:px-12 bg-white bg-linear-to-b from-white to-emerald-50"
       >
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">

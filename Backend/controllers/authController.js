@@ -46,7 +46,7 @@ export const registerUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      image: imageUrl,
+      profilePic: imageUrl,
     });
 
     res.json({

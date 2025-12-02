@@ -9,11 +9,11 @@ const RegisterForm = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState(null);
+  const [profilePic, setProfilePic] = useState(null);
 
-  // Handle image file selection
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+  // Handle profilePic file selection
+  const handleprofilePicChange = (e) => {
+    setProfilePic(e.target.files[0]);
   };
 
   const submitHandler = async (e) => {
@@ -24,7 +24,7 @@ const RegisterForm = () => {
       formData.append("username", username);
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("image", image);
+      formData.append("profilePic", profilePic);
 
       const { data } = await axios.post("/api/user/register", formData, {
         headers: {
@@ -109,14 +109,14 @@ const RegisterForm = () => {
             />
           </div>
 
-          {/* Image Upload */}
+          {/* profilePic Upload */}
           <div>
             <label className="text-white text-sm mb-1 block">Profile Picture</label>
             <input
               type="file"
               accept="image/*"
               required
-              onChange={handleImageChange}
+              onChange={handleprofilePicChange}
               className="w-full p-2 rounded-md bg-white/40 text-white 
               border border-white/30 focus:ring-2 focus:ring-emerald-300 outline-none"
             />

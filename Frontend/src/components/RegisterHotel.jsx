@@ -7,26 +7,29 @@ const RegisterHotel = () => {
   const { setShowHotelReg, setIsOwner, axios, token } = useAppContext();
 
   const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
   const [address, setAddress] = useState("");
+  const [contact, setContact] = useState("");
   const [city, setCity] = useState("");
   const [startingPrice, setStartingPrice] = useState("");
+  const [description, setDescription] = useState("");
   const [rating, setRating] = useState("");
   const [reviews, setReviews] = useState("");
-  const [images, setImages] = useState([]);
+  const [hotelImages, setHotelImages] = useState([]);
   const [amenities, setAmenities] = useState([]);
   const [policies, setPolicies] = useState("");
   const [offer, setOffer] = useState("");
 
   const amenitiesList = [
-    "WiFi",
-    "Air Conditioning",
-    "TV",
+    "Free WiFi",
     "Parking",
-    "Breakfast",
-    "Swimming Pool",
+    "Restaurant",
+    "Room Service",
+    "Daily Housekeeping",
+    "Power Backup",
+    "CCTV",
+    "Lift",
+    "Non-smoking Hotel",
   ];
-
   const handleAmenityChange = (amenity) => {
     setAmenities((prev) =>
       prev.includes(amenity)
@@ -37,7 +40,7 @@ const RegisterHotel = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files).slice(0, 4);
-    setImages(files);
+    setHotelImages(files);
   };
 
   const submitHandler = async (e) => {
@@ -49,6 +52,7 @@ const RegisterHotel = () => {
       formData.append("name", name);
       formData.append("contact", contact);
       formData.append("address", address);
+      formData.append("description", description);
       formData.append("city", city);
       formData.append("startingPrice", startingPrice);
       formData.append("rating", rating);
@@ -63,7 +67,7 @@ const RegisterHotel = () => {
         .filter(Boolean)
         .forEach((p) => formData.append("policies[]", p));
 
-      images.forEach((img) => formData.append("images", img));
+      hotelImages.forEach((img) => formData.append("hotelImages", img));
 
       const { data } = await axios.post("/api/hotels/register", formData, {
         headers: {
@@ -154,7 +158,7 @@ const RegisterHotel = () => {
           <div>
             <label className="text-sm mb-1 block">Starting Price</label>
             <input
-              type="number"
+              type="text"
               value={startingPrice}
               onChange={(e) => setStartingPrice(e.target.value)}
               placeholder="₹0"
@@ -197,6 +201,18 @@ const RegisterHotel = () => {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Complete address"
+              className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-300 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="sm:col-span-2">
+            <label className="text-sm mb-1 block">Description</label>
+            <textarea
+              required
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe your hotel and services"
               className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-300 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
             />
           </div>

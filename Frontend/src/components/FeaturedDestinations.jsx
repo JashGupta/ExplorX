@@ -5,7 +5,7 @@ import HotelCard from "./HotelCard";
 const FeaturedDestinations = () => {
   return (
     <>
-      <div className="w-full py-10 px-6 md:py-16 md:px-10 flex flex-col bg-gradient-to-b from-emerald-50 to-white">
+      <div className="w-full py-10 px-6 md:py-16 md:px-10 flex flex-col bg-linear-to-b from-emerald-50 to-white">
         <h1 className="text-3xl font-bold">Featured Destinations</h1>
         <p className="text-sm md:text-base text-gray-600">
           Handpicked stays for your perfect getaway.

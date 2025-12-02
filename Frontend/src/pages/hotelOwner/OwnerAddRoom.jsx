@@ -1,153 +1,265 @@
 // src/pages/AddRoom.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { GiCheckMark } from "react-icons/gi";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const AddRoom = () => {
-  const [formData, setFormData] = useState({
-    images: [],
-    roomType: "",
-    price: "",
-    amenities: [],
-  });
+  const { axios, token } = useAppContext();
+
+  const [hotel, setHotel] = useState("");
+  const [roomType, setRoomType] = useState("");
+  const [price, setPrice] = useState("");
+  const [capacity, setCapacity] = useState(1);
+  const [active, setActive] = useState(true);
+  const [roomImages, setRoomImages] = useState([]);
+  const [amenities, setAmenities] = useState([]);
+
+  const [hotels, setHotels] = useState([]);
 
   const roomTypes = [
     "Standard Room",
     "Deluxe Room",
-    "Executive Suite",
-    "Luxury Villa",
+    "Premium Room",
+    "Family Room",
+    "Suite Room",
   ];
   const amenitiesList = [
     "WiFi",
-    "Air Conditioning",
     "TV",
-    "Parking",
-    "Breakfast",
-    "Swimming Pool",
+    "Air Conditioning",
+    "Geyser",
+    "Work Desk",
+    "Toiletries",
+    "Hot Water",
+    "Wardrobe",
+    "Kettle",
   ];
 
-  // Handle image uploads
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const { data } = await axios.get("/api/hotels/get-my-hotels");
+        setHotels(data.hotels || []);
+      } catch (error) {
+        console.error("Failed to fetch hotels:", error);
+      }
+    };
+    fetchHotels();
+  }, [axios]);
+
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 4); // max 4 images
-    setFormData({ ...formData, images: files });
+    const files = Array.from(e.target.files).slice(0, 4);
+    setRoomImages(files);
   };
 
-  // Handle amenities
   const handleAmenityChange = (amenity) => {
-    setFormData((prev) => ({
-      ...prev,
-      amenities: prev.amenities.includes(amenity)
-        ? prev.amenities.filter((a) => a !== amenity)
-        : [...prev.amenities, amenity],
-    }));
+    setAmenities((prev) =>
+      prev.includes(amenity)
+        ? prev.filter((a) => a !== amenity)
+        : [...prev, amenity]
+    );
   };
 
-  // Handle submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Room Data:", formData);
-    alert("Room added successfully!");
+    try {
+      const formData = new FormData();
+      formData.append("hotel", hotel);
+      formData.append("roomType", roomType);
+      formData.append("price", price);
+      formData.append("capacity", capacity);
+      formData.append("active", active);
+
+      amenities.forEach((a) => formData.append("amenities[]", a));
+      roomImages.forEach((img) => formData.append("roomImages", img));
+
+      const { data } = await axios.post("/api/rooms/add-room", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (data.success) {
+        toast.success(data.message || "Room added successfully!");
+        // reset form
+        setHotel("");
+        setRoomType("");
+        setPrice("");
+        setCapacity(1);
+        setActive(true);
+        setRoomImages([]);
+        setAmenities([]);
+      } else {
+        toast.error(data.message || "Failed to add room");
+      }
+    } catch (error) {
+      toast.error("Error adding room: " + error.message);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-emerald-50 md:pt-24 px-4">
-      <div className="bg-gray-50 shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-emerald-950 mb-6 text-center sm:text-left">
-          Add New Room
-        </h1>
+    <div className="p-2 sm:pt-24 sm:pl-64 bg-emerald-50 min-h-screen">
+      {/* Header */}
+      <div className="p-4 sm:px-8 text-emerald-950">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-2">Add New Room</h1>
+        <p className="text-emerald-900 max-w-full sm:max-w-[75%] text-sm sm:text-base">
+          Add a new room to your hotel listing. Upload images, set the price,
+          capacity, and select amenities.
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 text-gray-500">
-          {/* Image Upload */}
-          <div>
-            <label className="block font-semibold mb-2 text-gray-700">
-              Upload Room Images (Max 4)
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-              className="border rounded-lg p-2 w-full"
-            />
-            <div className="flex flex-wrap gap-4 mt-3">
-              {formData.images.length > 0 &&
-                formData.images.map((img, idx) => (
+      {/* Form */}
+      <div className="p-4 sm:px-6">
+        <div className="bg-white shadow-lg rounded-xl p-6 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-6 text-gray-700">
+            {/* Hotel & Room Type */}
+            <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
+              <div className="flex-1">
+                <label className="block font-semibold mb-2">Select Hotel</label>
+                <select
+                  value={hotel}
+                  onChange={(e) => setHotel(e.target.value)}
+                  className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
+                  required
+                >
+                  <option value="">Choose Hotel</option>
+                  {hotels.map((h) => (
+                    <option key={h._id} value={h._id}>
+                      {h.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex-1">
+                <label className="block font-semibold mb-2">Room Type</label>
+                <select
+                  value={roomType}
+                  onChange={(e) => setRoomType(e.target.value)}
+                  className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
+                  required
+                >
+                  <option value="">Select Room Type</option>
+                  {roomTypes.map((type, idx) => (
+                    <option key={idx} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Price & Capacity */}
+            <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
+              <div className="flex-1">
+                <label className="block font-semibold mb-2">Price (₹)</label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="Enter price"
+                  className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
+                  min="0"
+                  required
+                />
+              </div>
+
+              <div className="flex-1">
+                <label className="block font-semibold mb-2">Capacity</label>
+                <input
+                  type="number"
+                  value={capacity}
+                  onChange={(e) => setCapacity(e.target.value)}
+                  className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
+                  min="1"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Active Status */}
+            <div
+              className={`flex items-center gap-3 cursor-pointer select-none ${
+                active ? "text-emerald-800" : "text-gray-700"
+              }`}
+              onClick={() => setActive(!active)}
+            >
+              <div
+                className={`w-5 h-5 border rounded-md shrink-0 flex items-center justify-center ${
+                  active
+                    ? "bg-emerald-500 border-emerald-500"
+                    : "border-gray-400 bg-white"
+                }`}
+              >
+                {active && <GiCheckMark />}
+              </div>
+              <label className="font-semibold">
+                {active ? "Active" : "Inactive"}
+              </label>
+            </div>
+
+            {/* Image Upload */}
+            <div>
+              <label className="block font-semibold mb-3">
+                Upload Room images (Max 4)
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+                className="border rounded-lg p-2 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
+              />
+              <div className="flex flex-wrap gap-4 mt-4">
+                {roomImages.map((img, idx) => (
                   <div
                     key={idx}
-                    className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden"
+                    className="w-24 h-24 rounded-lg overflow-hidden shadow relative group"
                   >
                     <img
-                      src={URL.createObjectURL(img)}
+                      src={
+                        typeof img === "string" ? img : URL.createObjectURL(img)
+                      }
                       alt="Preview"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition"
                     />
                   </div>
                 ))}
+              </div>
             </div>
-          </div>
 
-          {/* Room Type */}
-          <div>
-            <label className="block font-semibold mb-2 text-gray-700">Room Type</label>
-            <select
-              value={formData.roomType}
-              onChange={(e) =>
-                setFormData({ ...formData, roomType: e.target.value })
-              }
-              className="border rounded-lg p-3 w-full"
-              required
+            {/* Amenities */}
+            <div>
+              <label className="block font-semibold mb-3">Amenities</label>
+              <div className="flex flex-wrap gap-3">
+                {amenitiesList.map((amenity, idx) => (
+                  <label
+                    key={idx}
+                    className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-lg px-8 py-2 cursor-pointer hover:bg-emerald-100 transition"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={amenities.includes(amenity)}
+                      onChange={() => handleAmenityChange(amenity)}
+                      className="w-4 h-4 accent-emerald-500"
+                    />
+                    <span className="text-gray-700 text-sm">{amenity}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition shadow-md"
             >
-              <option value="">Select Room Type</option>
-              {roomTypes.map((type, idx) => (
-                <option key={idx} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Price */}
-          <div>
-            <label className="block font-semibold mb-2 text-gray-700">Price (₹)</label>
-            <input
-              type="number"
-              value={formData.price}
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
-              }
-              placeholder="Enter price"
-              className="border rounded-lg p-3 w-full"
-              required
-            />
-          </div>
-
-          {/* Amenities */}
-          <div>
-            <label className="block font-semibold mb-2 text-gray-700">Amenities</label>
-            <div className="flex flex-wrap">
-              {amenitiesList.map((amenity, idx) => (
-                <label
-                  key={idx}
-                  className="flex items-center gap-2 w-full sm:w-1/2 mb-3"
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.amenities.includes(amenity)}
-                    onChange={() => handleAmenityChange(amenity)}
-                    className="w-4 h-4"
-                  />
-                  <span>{amenity}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-emerald-800 text-white py-3 rounded-lg font-semibold hover:bg-emerald-900 transition"
-          >
-            Add Room
-          </button>
-        </form>
+              Add Room
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

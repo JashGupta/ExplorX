@@ -8,7 +8,7 @@ const userRouter = new Router();
 
 userRouter.get("/", authMiddleware, getUserData); 
 
-userRouter.post("/register", upload.single("image"), registerUser);
+userRouter.post("/register", upload.single("profilePic"), registerUser);
 userRouter.post("/login", loginUser);
 
 userRouter.post("/store-recent-search", authMiddleware, storeRecentSearchedCities)

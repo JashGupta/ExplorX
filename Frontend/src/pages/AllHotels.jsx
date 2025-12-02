@@ -1,12 +1,30 @@
 import { useState } from "react";
-import hotels from "../data/hotelsData";
 import { FaStar } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import { useEffect } from "react";
+import { toast } from "react-hot-toast";
+
 const AllHotels = () => {
 
-  const navigate = useNavigate();
+  const { axios, navigate } = useAppContext();
+
+  const [hotels, setHotels] = useState([]);
   const [openFilters, setOpenFilters] = useState(false);
+
+  useEffect(() => {
+    const fetchHotels = async() => {
+      try {
+        const { data } = await axios.get('/api/hotels/get-hotels');
+        setHotels(data.hotels || []);
+      } catch(error) {
+        console.error("Failed to fetch hotels:", error);
+        toast.error("Failed to fetch hotels");
+      }
+    };
+    fetchHotels();
+  }, [axios]);
+  
 
   return (
     <>
@@ -101,7 +119,7 @@ const AllHotels = () => {
                 className="bg-white md:w-full rounded-xl shadow-md transition flex flex-col md:flex-row hover:scale-102 hover:shadow-xl"
               >
                 <img
-                  src={hotel.images[0]}
+                  src={hotel.hotelImages[0].url}
                   alt={hotel.name}
                   className="w-full md:w-1/2 h-60 object-cover rounded-xl"
                 />
@@ -129,7 +147,7 @@ const AllHotels = () => {
                         />
                       ))}
                       <span className="text-gray-500 text-sm ml-2">
-                        {hotel.reviews} reviews
+                        {hotel.reviews}+ reviews
                       </span>
                     </div>
 
@@ -146,7 +164,7 @@ const AllHotels = () => {
                   </div>
 
                   <span className="text-lg font-bold text-gray-900 mt-4">
-                    {hotel.price}
+                    ₹{hotel.startingPrice}
                   </span>
                 </div>
               </div>

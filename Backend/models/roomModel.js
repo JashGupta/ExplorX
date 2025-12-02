@@ -7,13 +7,21 @@ export const roomSchema = new mongoose.Schema(
       ref: "Hotel",
       required: true,
     },
+
     roomType: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
-    images: [{ type: String }],
-    amenities: [String],
+
+    roomImages: [
+      {
+        url: { type: String, required: true },
+        public_id: { type: String, required: true },
+      }
+    ],
+
     capacity: { type: Number, default: 1 },
+    amenities: [String],
+
     active: { type: Boolean, default: true },
-    owner: { type: String, ref: "User" }, // Clerk id (optional)
     bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
   },
   { timestamps: true }
