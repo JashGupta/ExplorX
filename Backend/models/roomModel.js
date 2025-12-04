@@ -8,6 +8,9 @@ export const roomSchema = new mongoose.Schema(
       required: true,
     },
 
+    roomDescription: { type: String, required: true },
+    bedType: { type: String, required: true },
+
     roomType: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
 

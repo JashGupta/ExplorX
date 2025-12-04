@@ -12,7 +12,7 @@ const HotelCard = ({ hotel, index }) => {
       >
         <img
           className="h-40 sm:h-44 w-full object-cover rounded-xl"
-          src={hotel.images[0]}
+          src={hotel.hotelImages[0].url}
           alt={hotel.name}
         />
 
@@ -36,7 +36,7 @@ const HotelCard = ({ hotel, index }) => {
 
           <div className="mt-3 flex items-center justify-between">
             <p className="text-base font-bold text-slate-900">
-              ₹{hotel.price} / night
+              ₹{hotel.startingPrice} / night
             </p>
             <button className="bg-gray-700 text-white text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-800 transition">
               Book Now

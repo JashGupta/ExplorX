@@ -9,6 +9,16 @@ const AddRoom = () => {
 
   const [hotel, setHotel] = useState("");
   const [roomType, setRoomType] = useState("");
+  const [roomDescription, setRoomDescription] = useState("");
+  const [bedType, setBedType] = useState("");
+  const bedTypes = [
+    "Single Bed",
+    "Double Bed",
+    "Queen Bed",
+    "King Bed",
+    "Twin Beds",
+  ];
+
   const [price, setPrice] = useState("");
   const [capacity, setCapacity] = useState(1);
   const [active, setActive] = useState(true);
@@ -67,6 +77,8 @@ const AddRoom = () => {
       const formData = new FormData();
       formData.append("hotel", hotel);
       formData.append("roomType", roomType);
+      formData.append("roomDescription", roomDescription);
+      formData.append("bedType", bedType);
       formData.append("price", price);
       formData.append("capacity", capacity);
       formData.append("active", active);
@@ -86,6 +98,8 @@ const AddRoom = () => {
         // reset form
         setHotel("");
         setRoomType("");
+        setRoomDescription("");
+        setBedType("");
         setPrice("");
         setCapacity(1);
         setActive(true);
@@ -149,6 +163,36 @@ const AddRoom = () => {
                   ))}
                 </select>
               </div>
+            </div>
+
+            {/* Room Description and Bed Type */}
+            <div>
+              <label className="block font-semibold mb-2">
+                Room Description
+              </label>
+              <textarea
+                value={roomDescription}
+                onChange={(e) => setRoomDescription(e.target.value)}
+                className="border rounded-lg p-3 w-full h-28 focus:ring-2 focus:ring-emerald-400 outline-none"
+                placeholder="Describe the room, view, interior, space, etc."
+                required
+              ></textarea>
+            </div>
+            <div className="flex-1">
+              <label className="block font-semibold mb-2">Bed Type</label>
+              <select
+                value={bedType}
+                onChange={(e) => setBedType(e.target.value)}
+                className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
+                required
+              >
+                <option value="">Select Bed Type</option>
+                {bedTypes.map((b, idx) => (
+                  <option key={idx} value={b}>
+                    {b}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Price & Capacity */}

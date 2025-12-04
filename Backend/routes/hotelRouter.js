@@ -7,7 +7,7 @@ const hotelRouter = express.Router();
 
 hotelRouter.post('/register',authMiddleware, upload.array('hotelImages', 4), registerHotel);
 hotelRouter.get('/get-hotels', getHotels);
-hotelRouter.get('/:id', getHotel);
 hotelRouter.get('/get-my-hotels', authMiddleware, getMyHotels);
+hotelRouter.get('/:id', getHotel);
 
 export default hotelRouter;

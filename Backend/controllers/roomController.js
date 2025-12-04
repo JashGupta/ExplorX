@@ -48,3 +48,29 @@ export const addRoom = async (req, res) => {
     });
   }
 };
+
+export const getRoom = async (req, res) => {
+  try {
+    const roomId = req.params.id;
+
+    const room = await Room.findById(roomId)
+      .populate({
+        path: "hotel",
+        select: "name address city contact rating reviews amenities policies offer hotelImages owner",
+        populate: {
+          path: "owner",
+          select: "username email profilePic role",
+        },
+      });
+
+    if (!room) {
+      return res.json({ success: false, message: "Room not found" });
+    }
+
+    return res.json({ success: true, room });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

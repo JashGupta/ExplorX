@@ -15,6 +15,7 @@ import OwnerSidebar from "./components/hotelOwner/OwnerSidebar";
 import { useAppContext } from "./context/AppContext";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
+import RoomDetails from "./pages/RoomDetails";
 
 function App() {
   const location = useLocation();
@@ -41,6 +42,7 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/hotels" element={<AllHotels />} />
           <Route path="/hotels/:id" element={<HotelDetails />} />
+          <Route path="/rooms/:id" element={<RoomDetails />} />
           <Route path="/my-bookings" element={<MyBookings />} />
 
           <Route path="/owner/dashboard" element={<OwnerDashboard />} />

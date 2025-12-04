@@ -28,6 +28,7 @@ const HotelDetails = () => {
       }
     }
     fetchHotel();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const [mainImage, setMainImage] = useState(null);
@@ -52,7 +53,7 @@ const HotelDetails = () => {
             
             {hotel.offer && (
               <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium text-xs tracking-wide">
-                {hotel.offer} off
+                Upto {hotel.offer} off
               </span>
             )}
           </div>
