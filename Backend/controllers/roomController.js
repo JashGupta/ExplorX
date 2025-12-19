@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 export const addRoom = async (req, res) => {
   try {
-    const { hotel } = req.body;
+    const { hotel, roomtype, price } = req.body;
 
     // Validate hotel
     const userHotel = await Hotel.findOne({ _id: hotel, owner: req.user._id });
@@ -12,6 +12,26 @@ export const addRoom = async (req, res) => {
       return res.json({
         success: false,
         message: "Hotel not found or unauthorized",
+      });
+    }
+
+    if(!roomtype, hotel, price){
+      return res.status(400).json({
+        success: false,
+        message: "Please provide all required fields: hotel, room type, atleast one room image, and price",
+      });
+    }
+
+    if (price <= 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Price must be a positive number" });
+    }
+
+    if(!req.files || req.files.length === 0){
+      return res.status(400).json({
+        success: false,
+        message: "At least one room image is required",
       });
     }
 

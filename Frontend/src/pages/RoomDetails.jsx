@@ -23,36 +23,39 @@ const RoomDetails = () => {
   const [isAvailable, setIsAvailable] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
 
-const checkAvailability = () => {
-  if (!room) return;
+  const checkAvailability = () => {
+    if (!room) return;
 
-  if (!checkIn || !checkOut) {
-    toast.error("Please select both dates");
-    return;
-  }
+    if (!checkIn || !checkOut) {
+      toast.error("Please select both dates");
+      return;
+    }
 
-  const start = new Date(checkIn);
-  const end = new Date(checkOut);
-  console.log("start: " + start + ", end: " + end);
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    console.log("start: " + start + ", end: " + end);
 
-  if (end <= start) {
-    toast.error("Check-out must be after check-in");
-    return;
-  }
+    if (end <= start) {
+      toast.error("Check-out must be after check-in");
+      return;
+    }
 
-  if (guests > room.capacity) {
-    toast.error(`Maximum ${room.capacity} guests allowed`);
-    return;
-  }
+    if (guests > room.capacity) {
+      toast.error(`Maximum ${room.capacity} guests allowed`);
+      return;
+    }
 
-  const conflict = bookedDates.some(({ start: bookedStart, end: bookedEnd }) => {
-    console.log("bookedStart: " + bookedStart + ", bookedEnd: " + bookedEnd);
-    return start < bookedEnd && end > bookedStart;
-  });
+    const conflict = bookedDates.some(
+      ({ start: bookedStart, end: bookedEnd }) => {
+        console.log(
+          "bookedStart: " + bookedStart + ", bookedEnd: " + bookedEnd
+        );
+        return start < bookedEnd && end > bookedStart;
+      }
+    );
 
-  setIsAvailable(!conflict);
-};
-
+    setIsAvailable(!conflict);
+  };
 
   // Fetch room details
   useEffect(() => {
@@ -156,21 +159,23 @@ const checkAvailability = () => {
             {room.hotel.address}, {room.hotel.city}
           </p>
 
-          <div className="flex items-center gap-2">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <FaStar
-                key={index}
-                className={`${
-                  index < room.hotel.rating
-                    ? "text-yellow-400"
-                    : "text-gray-400"
-                }`}
-              />
-            ))}
-            <span className="text-sm opacity-80">
-              {room.hotel.reviews}+ reviews
-            </span>
-          </div>
+          {room.hotel.rating > 0 && room.hotel.reviews > 0 && (
+            <div className="flex items-center gap-2">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <FaStar
+                  key={index}
+                  className={`${
+                    index < room.hotel.rating
+                      ? "text-yellow-400"
+                      : "text-gray-400"
+                  }`}
+                />
+              ))}
+              <span className="text-sm opacity-80">
+                {room.hotel.reviews}+ reviews
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -218,7 +223,9 @@ const checkAvailability = () => {
             <IoBed className="text-xl mr-2" />
             <div>
               <p className="font-semibold">Bed Type</p>
-              <p className="text-gray-500">{room.bedType || "King Size Bed"}</p>
+              <p className="text-gray-500">
+                {room.bedType || "Normal sized Bed"}
+              </p>
             </div>
           </div>
 
@@ -227,7 +234,7 @@ const checkAvailability = () => {
             <IoPeopleOutline className="text-xl mr-2" />
             <div>
               <p className="font-semibold">Max Guests</p>
-              <p className="text-gray-500">{room.capacity || 4} Guests</p>
+              <p className="text-gray-500">{room.capacity || 3} Guests</p>
             </div>
           </div>
 
@@ -334,20 +341,22 @@ const checkAvailability = () => {
       </div>
 
       {/* AMENITIES */}
-      <div>
-        <h2 className="text-2xl font-semibold mb-4">Extra Amenities</h2>
-        <div className="flex flex-wrap gap-3">
-          {room.amenities.map((a, idx) => (
-            <span
-              key={idx}
-              className="px-4 py-2 bg-gray-50 border border-emerald-50 rounded-2xl shadow-sm text-gray-700 text-sm
+      {room.amenities && (
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Extra Amenities</h2>
+          <div className="flex flex-wrap gap-3">
+            {room.amenities.map((a, idx) => (
+              <span
+                key={idx}
+                className="px-4 py-2 bg-gray-50 border border-emerald-50 rounded-2xl shadow-sm text-gray-700 text-sm
             hover:shadow-md transition"
-            >
-              {a}
-            </span>
-          ))}
+              >
+                {a}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* HOST CARD */}
       <div className="flex items-center gap-5 p-6 bg-white border border-emerald-50 rounded-3xl shadow-lg hover:shadow-xl transition">

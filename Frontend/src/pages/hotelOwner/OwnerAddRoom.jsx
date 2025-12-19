@@ -131,7 +131,7 @@ const AddRoom = () => {
             {/* Hotel & Room Type */}
             <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
               <div className="flex-1">
-                <label className="block font-semibold mb-2">Select Hotel</label>
+                <label className="block font-semibold mb-2">Select Hotel <span className="text-red-600">*</span></label>
                 <select
                   value={hotel}
                   onChange={(e) => setHotel(e.target.value)}
@@ -148,7 +148,7 @@ const AddRoom = () => {
               </div>
 
               <div className="flex-1">
-                <label className="block font-semibold mb-2">Room Type</label>
+                <label className="block font-semibold mb-2">Room Type <span className="text-red-600">*</span></label>
                 <select
                   value={roomType}
                   onChange={(e) => setRoomType(e.target.value)}
@@ -175,7 +175,6 @@ const AddRoom = () => {
                 onChange={(e) => setRoomDescription(e.target.value)}
                 className="border rounded-lg p-3 w-full h-28 focus:ring-2 focus:ring-emerald-400 outline-none"
                 placeholder="Describe the room, view, interior, space, etc."
-                required
               ></textarea>
             </div>
             <div className="flex-1">
@@ -184,7 +183,6 @@ const AddRoom = () => {
                 value={bedType}
                 onChange={(e) => setBedType(e.target.value)}
                 className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
-                required
               >
                 <option value="">Select Bed Type</option>
                 {bedTypes.map((b, idx) => (
@@ -198,7 +196,7 @@ const AddRoom = () => {
             {/* Price & Capacity */}
             <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
               <div className="flex-1">
-                <label className="block font-semibold mb-2">Price (₹)</label>
+                <label className="block font-semibold mb-2">Price (₹) <span className="text-red-600">*</span></label>
                 <input
                   type="number"
                   value={price}
@@ -218,7 +216,6 @@ const AddRoom = () => {
                   onChange={(e) => setCapacity(e.target.value)}
                   className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
                   min="1"
-                  required
                 />
               </div>
             </div>
@@ -247,11 +244,12 @@ const AddRoom = () => {
             {/* Image Upload */}
             <div>
               <label className="block font-semibold mb-3">
-                Upload Room images (Max 4)
+                Upload Room images (Max 4) <span className="text-red-600">*</span>
               </label>
               <input
                 type="file"
                 accept="image/*"
+                required
                 multiple
                 onChange={handleImageChange}
                 className="border rounded-lg p-2 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
