@@ -30,6 +30,14 @@ export const registerHotel = async (req, res) => {
       });
     }
 
+    const existingHotel = await Hotel.findOne({ name, owner });
+    if (existingHotel) {
+      return res.status(400).json({
+        success: false,
+        message: "You already have a hotel with this name",
+      });
+    }
+
     if (contact.length < 10) {
       return res.status(400).json({
         success: false,
@@ -138,6 +146,7 @@ export const getHotel = async (req, res) => {
 
 export const getMyHotels = async (req, res) => {
   try {
+    const owner = req.user._id;
     const hotels = await Hotel.find({ owner });
 
     res.json({ success: true, hotels });

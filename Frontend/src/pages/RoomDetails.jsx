@@ -2,11 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { FaStar } from "react-icons/fa";
-import {
-  IoCalendarOutline,
-  IoPeopleOutline,
-  IoBed
-} from "react-icons/io5";
+import { IoCalendarOutline, IoPeopleOutline, IoBed } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 
 import { useAppContext } from "../context/AppContext";
@@ -22,41 +18,41 @@ const RoomDetails = () => {
   // Booking states
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(2);
+  const [guests, setGuests] = useState(1);
   const [amount, setAmount] = useState(0);
-  const [availability, setAvailability] = useState(null);
-  const [checking, setChecking] = useState(false);
-
-  const checkAvailability = () => {
-    if (!checkIn || !checkOut) {
-      toast.error("Please select both dates");
-      return;
-    }
-
-    setChecking(true);
-
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-
-    const conflict = bookedDates.some((range) => {
-      return (
-        (start >= range.start && start <= range.end) ||
-        (end >= range.start && end <= range.end) ||
-        (start <= range.start && end >= range.end)
-      );
-    });
-
-    if (conflict) {
-      setAvailability("unavailable");
-    } else {
-      setAvailability("available");
-    }
-
-    setChecking(false);
-  };
-
-  // Stored booked ranges
+  const [isAvailable, setIsAvailable] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
+
+const checkAvailability = () => {
+  if (!room) return;
+
+  if (!checkIn || !checkOut) {
+    toast.error("Please select both dates");
+    return;
+  }
+
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+  console.log("start: " + start + ", end: " + end);
+
+  if (end <= start) {
+    toast.error("Check-out must be after check-in");
+    return;
+  }
+
+  if (guests > room.capacity) {
+    toast.error(`Maximum ${room.capacity} guests allowed`);
+    return;
+  }
+
+  const conflict = bookedDates.some(({ start: bookedStart, end: bookedEnd }) => {
+    console.log("bookedStart: " + bookedStart + ", bookedEnd: " + bookedEnd);
+    return start < bookedEnd && end > bookedStart;
+  });
+
+  setIsAvailable(!conflict);
+};
+
 
   // Fetch room details
   useEffect(() => {
@@ -64,13 +60,14 @@ const RoomDetails = () => {
       try {
         const { data } = await axios.get(`/api/rooms/${id}`);
         setRoom(data.room);
+        console.log("Raw bookings from backend:", data.room.bookings);
 
         // Extract unavailable dates
-        const unavailable = data.room.bookings.map((b) => ({
+        const unavailableDates = data.room.bookings.map((b) => ({
           start: new Date(b.checkIn),
           end: new Date(b.checkOut),
         }));
-        setBookedDates(unavailable);
+        setBookedDates(unavailableDates);
       } catch (error) {
         console.error("Failed to fetch room details:", error);
       }
@@ -87,6 +84,7 @@ const RoomDetails = () => {
 
   // Auto-calc booking amount
   useEffect(() => {
+    setIsAvailable(null);
     if (checkIn && checkOut) {
       const start = new Date(checkIn);
       const end = new Date(checkOut);
@@ -97,31 +95,18 @@ const RoomDetails = () => {
     }
   }, [checkIn, checkOut, room]);
 
-  // check if date selected falls inside booked range
-  const isDateUnavailable = (date) => {
-    const selected = new Date(date);
-    return bookedDates.some(
-      (range) => selected >= range.start && selected <= range.end
-    );
-  };
-
   // Booking handler
   const handleBooking = async () => {
-    if (!token) return toast.error("Please login to book a room");
-
     if (!checkIn || !checkOut)
       return toast.error("Select check-in and check-out dates");
 
-    if (isDateUnavailable(checkIn) || isDateUnavailable(checkOut))
-      return toast.error("Selected date is not available");
-
-    if (availability !== "available") {
+    if (isAvailable != true) {
       toast.error("Please check availability before booking.");
       return;
     }
 
     try {
-      const { data } = await axios.post(
+      await axios.post(
         "/api/bookings/create-booking",
         {
           hotel: room.hotel._id,
@@ -140,10 +125,12 @@ const RoomDetails = () => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      if (data.success) {
-        toast.success("Room booked successfully!");
-      }
+      toast.success("Booking successfull!");
+      setCheckIn("");
+      setCheckOut("");
+      setGuests(1);
+      setIsAvailable(null);
+      setAmount(0);
     } catch (err) {
       console.log(err);
       toast.error("Booking failed. Try again!");
@@ -154,7 +141,7 @@ const RoomDetails = () => {
     return <p className="text-center text-xl mt-24">Room not found.</p>;
 
   return (
-    <div className="px-6 sm:px-10 lg:px-24 py-12 pt-32 space-y-20">
+    <div className="px-6 sm:px-10 lg:px-24 py-12 pt-32 space-y-16">
       {/* HERO SECTION */}
       <div className="relative rounded-3xl overflow-hidden shadow-2xl">
         <img src={mainImage?.url} className="w-full h-[480px] object-cover" />
@@ -221,7 +208,7 @@ const RoomDetails = () => {
 
       {/* EXTRA ROOM DETAILS */}
       <div className="border-t-[0.25px] border-emerald-800 pt-8">
-        <h2 className="text-2xl font-semibold text-gray-800">
+        <h2 className="text-2xl font-semibold text-center text-gray-800">
           Room Highlights
         </h2>
 
@@ -252,26 +239,8 @@ const RoomDetails = () => {
               <p className="text-gray-500">Free before 24 hrs</p>
             </div>
           </div>
-
         </div>
       </div>
-
-                  {/* AMENITIES */}
-      <div>
-        <h2 className="text-2xl font-semibold mb-4">Amenities</h2>
-        <div className="flex flex-wrap gap-3">
-          {room.amenities.map((a, idx) => (
-            <span
-              key={idx}
-              className="px-4 py-2 bg-gray-50 border border-emerald-50 rounded-2xl shadow-sm text-gray-700 text-sm
-            hover:shadow-md transition"
-            >
-              {a}
-            </span>
-          ))}
-        </div>
-      </div>
-
 
       {/* BOOKING CARD */}
       <div className="flex justify-center rounded-3xl bg-gray-50 shadow-md hover:shadow-lg transition">
@@ -289,7 +258,7 @@ const RoomDetails = () => {
               <input
                 type="date"
                 value={checkIn}
-                 min={new Date().toISOString().split("T")[0]}
+                min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setCheckIn(e.target.value)}
                 className="w-full rounded-xl border border-gray-300 px-3 py-3 bg-white shadow-sm outline-none focus:ring-2 focus:ring-emerald-500"
               />
@@ -317,9 +286,9 @@ const RoomDetails = () => {
               <input
                 type="number"
                 min={1}
-                max={5}
+                max={room.capacity}
                 value={guests}
-                onChange={(e) => setGuests(e.target.value)}
+                onChange={(e) => setGuests(Number(e.target.value))}
                 className="w-full rounded-xl border border-gray-300 px-3 py-3 bg-white shadow-sm outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
@@ -327,33 +296,26 @@ const RoomDetails = () => {
 
           {/* ONE BUTTON — CHANGES LOGIC BASED ON STATE */}
           <button
-            disabled={checking}
-            onClick={
-              availability === "available" ? handleBooking : checkAvailability
-            }
+            onClick={isAvailable === true ? handleBooking : checkAvailability}
             className={`w-full py-3 rounded-xl font-semibold shadow-lg transition text-white
         ${
-          availability === "available"
+          isAvailable === true
             ? "bg-emerald-800 hover:bg-emerald-900"
             : "bg-emerald-700 hover:bg-emerald-800"
         }
       `}
           >
-            {checking 
-    ? "Checking..." 
-    : availability === "available"
-      ? "Confirm Booking"
-      : "Check Availability"}
+            {isAvailable === true ? "Confirm Booking" : "Check Availability"}
           </button>
 
           {/* Availability Message */}
           <div className="text-center">
-            {availability === "available" && (
+            {isAvailable === true && (
               <p className="text-green-600 font-semibold text-lg">
                 ✔ Room is available
               </p>
             )}
-            {availability === "unavailable" && (
+            {isAvailable === false && (
               <p className="text-red-600 font-semibold text-lg">
                 ✘ Room is unavailable
               </p>
@@ -361,13 +323,29 @@ const RoomDetails = () => {
           </div>
 
           {/* TOTAL AMOUNT (HIDDEN UNTIL USER CHECKS) */}
-          {availability === "available" && (
+          {isAvailable === true && (
             <div className="pt-4 border-t border-gray-200 text-center">
               <p className="text-xl font-semibold text-emerald-900 mb-3">
                 Total Amount: ₹{amount}
               </p>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* AMENITIES */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Extra Amenities</h2>
+        <div className="flex flex-wrap gap-3">
+          {room.amenities.map((a, idx) => (
+            <span
+              key={idx}
+              className="px-4 py-2 bg-gray-50 border border-emerald-50 rounded-2xl shadow-sm text-gray-700 text-sm
+            hover:shadow-md transition"
+            >
+              {a}
+            </span>
+          ))}
         </div>
       </div>
 

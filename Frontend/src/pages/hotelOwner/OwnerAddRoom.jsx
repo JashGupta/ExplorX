@@ -114,9 +114,9 @@ const AddRoom = () => {
   };
 
   return (
-    <div className="p-2 sm:pt-24 sm:pl-64 bg-emerald-50 min-h-screen">
+    <div className="h-screen sm:pl-64 sm:pt-24 bg-emerald-50 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="p-4 sm:px-8 text-emerald-950">
+      <div className="p-4 sm:px-8 text-emerald-950 shrink-0">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">Add New Room</h1>
         <p className="text-emerald-900 max-w-full sm:max-w-[75%] text-sm sm:text-base">
           Add a new room to your hotel listing. Upload images, set the price,
@@ -125,7 +125,7 @@ const AddRoom = () => {
       </div>
 
       {/* Form */}
-      <div className="p-4 sm:px-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:px-6 pb-8">
         <div className="bg-white shadow-lg rounded-xl p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6 text-gray-700">
             {/* Hotel & Room Type */}

@@ -9,7 +9,10 @@ export const addRoom = async (req, res) => {
     // Validate hotel
     const userHotel = await Hotel.findOne({ _id: hotel, owner: req.user._id });
     if (!userHotel) {
-      return res.json({ success: false, message: "Hotel not found or unauthorized" });
+      return res.json({
+        success: false,
+        message: "Hotel not found or unauthorized",
+      });
     }
 
     // Upload images (max 4)
@@ -39,7 +42,6 @@ export const addRoom = async (req, res) => {
       message: "Room created successfully",
       room: newRoom,
     });
-
   } catch (error) {
     console.error("Create Room Error:", error);
     return res.status(500).json({
@@ -55,8 +57,13 @@ export const getRoom = async (req, res) => {
 
     const room = await Room.findById(roomId)
       .populate({
+        path: "bookings",
+        select: "checkIn checkOut -_id",
+      })
+      .populate({
         path: "hotel",
-        select: "name address city contact rating reviews amenities policies offer hotelImages owner",
+        select:
+          "name address city contact rating reviews amenities policies offer hotelImages owner",
         populate: {
           path: "owner",
           select: "username email profilePic role",
@@ -68,7 +75,6 @@ export const getRoom = async (req, res) => {
     }
 
     return res.json({ success: true, room });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Server error" });
