@@ -6,18 +6,21 @@ import toast from "react-hot-toast";
 const RegisterHotel = () => {
   const { setShowHotelReg, setIsOwner, axios, token } = useAppContext();
 
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [contact, setContact] = useState("");
-  const [city, setCity] = useState("");
-  const [startingPrice, setStartingPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [rating, setRating] = useState("");
-  const [reviews, setReviews] = useState("");
-  const [hotelImages, setHotelImages] = useState([]);
+  const [form, setForm] = useState({
+    name: "",
+    contact: "",
+    address: "",
+    city: "",
+    startingPrice: "",
+    description: "",
+    rating: "",
+    reviews: "",
+    offer: "",
+  });
+
   const [amenities, setAmenities] = useState([]);
-  const [policies, setPolicies] = useState("");
-  const [offer, setOffer] = useState("");
+  const [policies, setPolicies] = useState([]);
+  const [hotelImages, setHotelImages] = useState([]);
 
   const amenitiesList = [
     "Free WiFi",
@@ -30,43 +33,92 @@ const RegisterHotel = () => {
     "Lift",
     "Non-smoking Hotel",
   ];
-  const handleAmenityChange = (amenity) => {
+
+  const policiesList = [
+    "No Smoking",
+    "No Pets Allowed",
+    "Check-in after 12 PM",
+    "Check-out before 11 AM",
+    "Valid ID required",
+  ]
+
+  // Handle input change
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Amenity toggle
+  const handleAmenityChange = (item) => {
     setAmenities((prev) =>
-      prev.includes(amenity)
-        ? prev.filter((a) => a !== amenity)
-        : [...prev, amenity]
+      prev.includes(item) ? prev.filter((a) => a !== item) : [...prev, item]
     );
   };
 
+  const handlePoliciesChange = (item) => {
+    setPolicies((prev) =>
+      prev.includes(item) ? prev.filter((a) => a !== item) : [...prev, item]
+    );
+  };
+
+  // File Upload
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 4);
+    const files = Array.from(e.target.files);
+
+    if (files.length > 4) {
+      toast.error("You can upload max 4 images.");
+      return;
+    }
+
     setHotelImages(files);
   };
 
+  // -------------------- VALIDATIONS --------------------
+  const validateForm = () => {
+    if (form.name.trim().length < 3)
+      return "Hotel name must be at least 3 characters";
+
+    if (!/^\d{10}$/.test(form.contact))
+      return "Enter a valid 10-digit contact number";
+
+    if (!form.city) return "Please select a city";
+
+    if (isNaN(form.startingPrice) || Number(form.startingPrice) <= 0)
+      return "Starting price must be a positive number";
+
+    if (form.rating && (form.rating < 0 || form.rating > 5))
+      return "Rating must be between 0 and 5";
+
+    if (amenities.length < 3) return "Please select at least 3 amenities";
+
+    if (policies.length < 3) return "Please select at least 3 policies";
+
+    if (form.reviews && form.reviews < 0) return "Reviews cannot be negative";
+
+    if (hotelImages.length === 0) return "Please upload at least 1 hotel image";
+
+    return null;
+  };
+
+  // -------------------- SUBMIT HANDLER --------------------
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    const errorMsg = validateForm();
+    if (errorMsg) return toast.error(errorMsg);
 
     try {
       const formData = new FormData();
 
-      formData.append("name", name);
-      formData.append("contact", contact);
-      formData.append("address", address);
-      formData.append("description", description);
-      formData.append("city", city);
-      formData.append("startingPrice", startingPrice);
-      formData.append("rating", rating);
-      formData.append("reviews", reviews);
-      formData.append("offer", offer);
+      // Add normal fields
+      Object.entries(form).forEach(([k, v]) => formData.append(k, v));
 
+      // Amenities
       amenities.forEach((a) => formData.append("amenities[]", a));
 
-      policies
-        .split(",")
-        .map((p) => p.trim())
-        .filter(Boolean)
-        .forEach((p) => formData.append("policies[]", p));
+      //Policies
+      policies.forEach((p) => formData.append("policies[]", p));
 
+      // Images
       hotelImages.forEach((img) => formData.append("hotelImages", img));
 
       const { data } = await axios.post("/api/hotels/register", formData, {
@@ -84,13 +136,13 @@ const RegisterHotel = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error("Error registering hotel: " + error.message);
+      toast.error("Registration failed: " + error.message);
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm pt-20">
-      <div className="relative w-full max-w-5xl bg-white/30 backdrop-blur-xl border border-white/30 rounded-2xl shadow-2xl p-6 md:p-8 text-white overflow-y-auto max-h-[85vh] animate-fadeIn">
+      <div className="relative w-full max-w-5xl bg-white/20 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-2xl p-6 md:p-8 text-white overflow-y-auto max-h-[85vh]">
         {/* Close Button */}
         <button
           onClick={() => setShowHotelReg(false)}
@@ -100,11 +152,11 @@ const RegisterHotel = () => {
         </button>
 
         {/* Heading */}
-        <h2 className="text-3xl font-semibold text-center mb-2">
+        <h2 className="text-3xl font-bold text-center mb-1">
           Register Your Hotel
         </h2>
         <p className="text-center text-gray-200 mb-6 text-sm">
-          Add your hotel details to reach thousands of travelers
+          Fill in the details carefully — first impression matters!
         </p>
 
         <form
@@ -113,57 +165,159 @@ const RegisterHotel = () => {
         >
           {/* Hotel Name */}
           <div>
-            <label className="text-sm mb-1 block">Hotel Name</label>
+            <label className="text-sm mb-1 block">
+              Hotel Name <span className="text-red-600">*</span>
+            </label>
             <input
               type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              value={form.name}
+              onChange={handleChange}
               placeholder="Hotel Name"
               className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-200 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+              required
             />
           </div>
 
-          {/* Contact */}
+          {/* Contact Number */}
           <div>
-            <label className="text-sm mb-1 block">Contact Number</label>
+            <label className="text-sm mb-1 block">
+              Contact Number <span className="text-red-500">*</span>
+            </label>
             <input
               type="tel"
-              required
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
-              placeholder="Phone number"
+              name="contact"
+              value={form.contact}
+              onChange={handleChange}
+              placeholder="Phone Number"
               className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-200 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+              required
+            />
+          </div>
+
+          {/* Full Address */}
+          <div className="sm:col-span-2">
+            <label className="text-sm mb-1 block">
+              Full Address <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              name="address"
+              value={form.address}
+              onChange={handleChange}
+              placeholder="Complete address"
+              className="w-full p-3 rounded-md bg-white/25 text-white border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+              required
             />
           </div>
 
           {/* City */}
-          <div>
-            <label className="text-sm mb-1 block">Select City</label>
+          <div className="sm:col-span-2">
+            <label className="text-sm mb-1 block">
+              Select City <span className="text-red-500">*</span>
+            </label>
             <select
-              value={city}
-              required
-              onChange={(e) => setCity(e.target.value)}
+              name="city"
+              value={form.city}
+              onChange={handleChange}
               className="w-full p-3 rounded-md bg-white/25 text-white border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+              required
             >
               <option value="">Choose City</option>
               <option value="Haryana">Haryana</option>
-              <option value="New York">New York</option>
               <option value="Himachal">Himachal</option>
               <option value="Punjab">Punjab</option>
+              <option value="New York">New York</option>
             </select>
           </div>
 
           {/* Starting Price */}
           <div>
-            <label className="text-sm mb-1 block">Starting Price</label>
+            <label className="text-sm mb-1 block">
+              Starting Price <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
-              value={startingPrice}
-              onChange={(e) => setStartingPrice(e.target.value)}
+              name="startingPrice"
+              value={form.startingPrice}
+              onChange={handleChange}
               placeholder="₹0"
               className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-200 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+              required
             />
+          </div>
+
+          {/* Offer */}
+          <div>
+            <label className="text-sm mb-1 block">Offer</label>
+            <input
+              type="text"
+              name="offer"
+              value={form.offer}
+              onChange={handleChange}
+              placeholder="20% Off"
+              className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-200 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+            />
+          </div>
+
+          {/* Hotel Images */}
+          <div className="sm:col-span-2">
+            <label className="text-sm mb-1 block">
+              Hotel Images (Max 4) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="file"
+              multiple
+              onChange={handleImageChange}
+              className="w-full p-3 rounded-md bg-white/25 text-white border border-white/20"
+              required
+            />
+
+            {/* Preview */}
+            {hotelImages.length > 0 && (
+              <div className="flex gap-3 mt-2">
+                {hotelImages.map((img, i) => (
+                  <div key={i} className="w-20 h-20 rounded overflow-hidden">
+                    <img
+                      src={URL.createObjectURL(img)}
+                      alt="preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          <div className="sm:col-span-2">
+            <label className="text-sm mb-1 block">Description</label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Describe your hotel"
+              className="w-full p-3 rounded-md bg-white/25 text-white border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
+            />
+          </div>
+
+          {/* Amenities */}
+          <div className="sm:col-span-2">
+            <label className="text-sm mb-2 block">
+              Amenities <span className="text-red-500">*</span>
+              <p className="text-xs text-gray-300 mb-2">(atleast 3)</p>
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {amenitiesList.map((a, idx) => (
+                <label key={idx} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={amenities.includes(a)}
+                    onChange={() => handleAmenityChange(a)}
+                  />
+                  {a}
+                </label>
+              ))}
+            </div>
           </div>
 
           {/* Rating */}
@@ -174,8 +328,9 @@ const RegisterHotel = () => {
               min="0"
               max="5"
               step="0.1"
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
+              name="rating"
+              value={form.rating}
+              onChange={handleChange}
               placeholder="4.5"
               className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-200 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
             />
@@ -186,95 +341,39 @@ const RegisterHotel = () => {
             <label className="text-sm mb-1 block">Reviews</label>
             <input
               type="number"
-              value={reviews}
-              onChange={(e) => setReviews(e.target.value)}
+              name="reviews"
+              value={form.reviews}
+              onChange={handleChange}
               placeholder="120"
               className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-200 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
             />
           </div>
 
-          {/* Address - full width */}
-          <div className="sm:col-span-2">
-            <label className="text-sm mb-1 block">Hotel Address</label>
-            <textarea
-              required
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Complete address"
-              className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-300 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
-            />
-          </div>
-
-          {/* Description */}
-          <div className="sm:col-span-2">
-            <label className="text-sm mb-1 block">Description</label>
-            <textarea
-              required
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your hotel and services"
-              className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-300 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
-            />
-          </div>
-
-          {/* Images */}
-          <div className="sm:col-span-2">
-            <label className="text-sm mb-1 block">Upload Images (max 4)</label>
-            <input
-              type="file"
-              multiple
-              onChange={handleImageChange}
-              className="w-full p-3 rounded-md bg-white/25 text-white border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
-            />
-          </div>
-
           {/* Amenities */}
           <div className="sm:col-span-2">
-            <label className="text-sm mb-2 block">Amenities</label>
+            <label className="text-sm mb-2 block">
+              Policies <span className="text-red-500">*</span>
+              <p className="text-xs text-gray-300 mb-2">(atleast 3)</p>
+            </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {amenitiesList.map((amenity, idx) => (
+              {policiesList.map((a, idx) => (
                 <label key={idx} className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
-                    checked={amenities.includes(amenity)}
-                    onChange={() => handleAmenityChange(amenity)}
+                    checked={policies.includes(a)}
+                    onChange={() => handlePoliciesChange(a)}
                   />
-                  {amenity}
+                  {a}
                 </label>
               ))}
             </div>
           </div>
 
-          {/* Policies */}
-          <div className="sm:col-span-2">
-            <label className="text-sm mb-1 block">
-              Policies (comma separated)
-            </label>
-            <textarea
-              value={policies}
-              onChange={(e) => setPolicies(e.target.value)}
-              placeholder="No smoking, Check-in after 2PM"
-              className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-300 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
-            />
-          </div>
-
-          {/* Offer */}
-          <div className="sm:col-span-2">
-            <label className="text-sm mb-1 block">Offer</label>
-            <input
-              type="text"
-              value={offer}
-              onChange={(e) => setOffer(e.target.value)}
-              placeholder="20% off"
-              className="w-full p-3 rounded-md bg-white/25 text-white placeholder-gray-300 border border-white/20 focus:ring-2 focus:ring-emerald-300 outline-none"
-            />
-          </div>
-
           {/* Submit Button */}
-          <div className="sm:col-span-2 pt-2">
+          <div className="sm:col-span-2 pt-3">
             <button
               type="submit"
-              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-all shadow-lg"
+              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-lg transition-all"
             >
               Register Hotel
             </button>

@@ -7,7 +7,7 @@ const hotelSchema = new mongoose.Schema(
     contact: { type: String, required: true },
     city: { type: String, required: true, index: true },
 
-    startingPrice: { type: Number, required: false },
+    startingPrice: { type: Number, required: true },
 
     description: { type: String },
 
@@ -20,8 +20,17 @@ const hotelSchema = new mongoose.Schema(
         public_id: { type: String, required: true },
       },
     ],
-    amenities: [String],
-    policies: [String],
+    amenities: {
+      type: [String],
+      required: true,
+      minlength: 3,
+    },
+
+    policies: {
+      type: [String],
+      required: true,
+      minlength: 3,
+    },
     offer: { type: String },
 
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

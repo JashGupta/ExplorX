@@ -4,13 +4,37 @@ import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
 const LoginForm = () => {
-  const { setShowLogin, setShowRegister, axios, setToken, setUser, navigate } = useAppContext();
+  const { setShowLogin, setShowRegister, axios, setToken, setUser, navigate } =
+    useAppContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email) ? null : "Enter a valid email address.";
+  };
+
+  const validatePassword = (password) => {
+    // allows letters, numbers, symbols + min 6 chars, must include a digit & letter
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+
+    return passwordRegex.test(password)
+      ? null
+      : "Password must be at least 6 characters & include letters and numbers.";
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    // **Frontend validations**
+    const emailError = validateEmail(email);
+    if (emailError) return toast.error(emailError);
+
+    const passwordError = validatePassword(password);
+    if (passwordError) return toast.error(passwordError);
+
     try {
       const { data } = await axios.post("/api/user/login", {
         email,
@@ -18,27 +42,26 @@ const LoginForm = () => {
       });
 
       if (data.success) {
-
         localStorage.setItem("token", data.token);
         setToken(data.token);
         setUser(data.user);
 
         setShowLogin(false);
-        navigate("/");
         toast.success("Login Successful");
-
+        navigate("/");
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error("Login Failed: " + error.response?.data?.message);
+      toast.error(
+        "Login Failed: " + (error.response?.data?.message || "Server error")
+      );
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 backdrop-blur-sm pt-20">
       <div className="relative w-[90%] max-w-xl bg-white/40 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-2xl p-6 md:p-10 animate-fadeIn">
-
         {/* Close Button */}
         <button
           onClick={() => setShowLogin(false)}
@@ -56,7 +79,6 @@ const LoginForm = () => {
         </p>
 
         <form onSubmit={submitHandler} className="flex flex-col gap-5">
-
           {/* Email */}
           <div>
             <label className="text-white text-sm mb-1 block">Email</label>
@@ -72,17 +94,26 @@ const LoginForm = () => {
           </div>
 
           {/* Password */}
-          <div>
+          <div className="relative">
             <label className="text-white text-sm mb-1 block">Password</label>
+
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="•••••••"
-              className="w-full p-3 rounded-md bg-white/40 text-white placeholder-gray-200
-              border border-white/30 focus:ring-2 focus:ring-emerald-300 outline-none"
+              className="w-full p-3 pr-12 rounded-md bg-white/40 text-white placeholder-gray-200
+    border border-white/30 focus:ring-2 focus:ring-emerald-300 outline-none"
             />
+
+            {/* Eye icon */}
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 bottom-[11px] text-white cursor-pointer hover:text-emerald-300 transition"
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </span>
           </div>
 
           {/* Button */}
@@ -100,10 +131,9 @@ const LoginForm = () => {
           Don't have an account?{" "}
           <span
             onClick={() => {
-                setShowLogin(false);
-                setShowRegister(true);
-            }
-            }
+              setShowLogin(false);
+              setShowRegister(true);
+            }}
             className="cursor-pointer text-yellow-300 font-medium hover:underline"
           >
             Register Here

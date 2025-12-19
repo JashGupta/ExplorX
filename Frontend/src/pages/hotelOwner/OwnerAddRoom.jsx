@@ -8,9 +8,9 @@ const AddRoom = () => {
   const { axios, token } = useAppContext();
 
   const [hotel, setHotel] = useState("");
-  const [roomType, setRoomType] = useState("");
+  const [roomType, setRoomType] = useState("Standard Room");
   const [roomDescription, setRoomDescription] = useState("");
-  const [bedType, setBedType] = useState("");
+  const [bedType, setBedType] = useState("Double Bed");
   const bedTypes = [
     "Single Bed",
     "Double Bed",
@@ -20,7 +20,7 @@ const AddRoom = () => {
   ];
 
   const [price, setPrice] = useState("");
-  const [capacity, setCapacity] = useState(1);
+  const [capacity, setCapacity] = useState(2);
   const [active, setActive] = useState(true);
   const [roomImages, setRoomImages] = useState([]);
   const [amenities, setAmenities] = useState([]);

@@ -6,6 +6,7 @@ import { IoLocationOutline, IoHomeSharp } from "react-icons/io5";
 import { HiBadgeCheck } from "react-icons/hi";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
+import { IoSparkles } from "react-icons/io5";
 import RoomCard from "../components/RoomCard";
 import { useAppContext } from "../context/AppContext";
 import { useEffect } from "react";
@@ -26,18 +27,18 @@ const HotelDetails = () => {
       } catch (error) {
         console.error("Failed to fetch hotel details:", error);
       }
-    }
+    };
     fetchHotel();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const [mainImage, setMainImage] = useState(null);
 
   useEffect(() => {
-  if (hotel && hotel.hotelImages?.length > 0) {
-    setMainImage(hotel.hotelImages[0]);
-  }
-}, [hotel]);
+    if (hotel && hotel.hotelImages?.length > 0) {
+      setMainImage(hotel.hotelImages[0]);
+    }
+  }, [hotel]);
 
   if (!hotel) {
     return <p className="text-center text-xl mt-24">Room not found.</p>;
@@ -49,8 +50,10 @@ const HotelDetails = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-4xl text-emerald-950 font-bold tracking-tight">{hotel.name}</h1>
-            
+            <h1 className="text-4xl text-emerald-950 font-bold tracking-tight">
+              {hotel.name}
+            </h1>
+
             {hotel.offer && (
               <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium text-xs tracking-wide">
                 Upto {hotel.offer} off
@@ -68,29 +71,43 @@ const HotelDetails = () => {
 
         {/* Rating */}
         <div className="flex items-center gap-1">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <FaStar
-              key={index}
-              className={`${
-                index < hotel.rating ? "text-yellow-500" : "text-gray-300"
-              }`}
-            />
-          ))}
+          {/* If no rating and no reviews */}
+          {(!hotel.rating || hotel.rating === 0) &&
+          (!hotel.reviews || hotel.reviews === 0) ? (
+            <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-md font-semibold flex items-center gap-1">
+              <IoSparkles className="text-green-600" size={16} />
+              Newly Added
+            </span>
+          ) : (
+            <>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <FaStar
+                  key={index}
+                  className={`${
+                    index < (hotel.rating ?? 0)
+                      ? "text-yellow-500"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
 
-          <span className="text-gray-600 ml-2 text-sm">
-            ({hotel.reviews}+ reviews)
-          </span>
+              <span className="text-gray-600 ml-2 text-sm">
+                ({hotel.reviews}+ reviews)
+              </span>
+            </>
+          )}
         </div>
       </div>
 
       {/* Images Section */}
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex-1 rounded-3xl overflow-hidden shadow-lg">
-          {mainImage && (<img
-            src={mainImage?.url}
-            alt={hotel?.name}
-            className="w-full h-[420px] object-cover transition-transform duration-300 hover:scale-105"
-          />
+          {mainImage && (
+            <img
+              src={mainImage?.url}
+              alt={hotel?.name}
+              className="w-full h-[420px] object-cover transition-transform duration-300 hover:scale-105"
+            />
           )}
         </div>
 
@@ -115,7 +132,9 @@ const HotelDetails = () => {
       {/* Tagline + Price */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <p className="text-3xl font-light tracking-wide">
-          {hotel.description}
+          {hotel.description
+            ? hotel.description
+            : "Experience luxury and comfort like never before."}
         </p>
 
         <span className="text-emerald-950 font-semibold text-3xl">
@@ -140,15 +159,21 @@ const HotelDetails = () => {
 
       {/* View Room Options */}
       <div className="pt-8 border-t border-gray-300">
-        <h2 className="text-2xl font-semibold text-center mb-10">
-          View Room Options
-        </h2>
+        {rooms.length > 0 ? (
+          <>
+            <h2 className="text-2xl font-semibold text-center mb-10">
+              View Room Options
+            </h2>
 
-        <div className="flex flex-col gap-8">
-          {rooms.map((room, idx) => (
-            <RoomCard key={idx} room={room}/>
-          ))}
-        </div>
+            <div className="flex flex-col gap-8">
+              {rooms.map((room, idx) => (
+                <RoomCard key={idx} room={room} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-center text-gray-500">No rooms available.</p>
+        )}
       </div>
 
       {/* Policies */}
@@ -226,8 +251,12 @@ const HotelDetails = () => {
         />
 
         <div>
-          <p className="font-semibold text-lg">Hosted by {hotel.owner.username}</p>
-          <p className="text-gray-500 font-light text-md">Your stay organizer</p>
+          <p className="font-semibold text-lg">
+            Hosted by {hotel.owner.username}
+          </p>
+          <p className="text-gray-500 font-light text-md">
+            Your stay organizer
+          </p>
           <p className="text-gray-400 font-light text-xs">({hotel.contact})</p>
         </div>
 

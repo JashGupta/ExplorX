@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import {Toaster} from "react-hot-toast";
+import { useEffect } from "react";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -18,14 +19,30 @@ import RegisterForm from "./components/RegisterForm";
 import RoomDetails from "./pages/RoomDetails";
 
 function App() {
+
+  const {showLogin, showRegister, showHotelReg} = useAppContext();
   const location = useLocation();
   const isOwner = location.pathname.startsWith("/owner");
-  const {showLogin, showRegister, showHotelReg} = useAppContext();
+
+  const ScrollToTop = () => {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth"
+      });
+    }, [pathname]);
+
+    return null;
+  };
 
   return (
     <>
       <div className="min-h-screen flex flex-col">
         <Toaster />
+        <ScrollToTop />
         {showHotelReg && <RegisterHotel />}
         {showLogin && <LoginForm />}
         {showRegister && <RegisterForm />}

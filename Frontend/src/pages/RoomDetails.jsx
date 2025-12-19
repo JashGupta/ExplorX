@@ -5,7 +5,10 @@ import { FaStar } from "react-icons/fa";
 import {
   IoCalendarOutline,
   IoPeopleOutline,
+  IoBed
 } from "react-icons/io5";
+import { MdCancel } from "react-icons/md";
+
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
@@ -19,7 +22,7 @@ const RoomDetails = () => {
   // Booking states
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
+  const [guests, setGuests] = useState(2);
   const [amount, setAmount] = useState(0);
   const [availability, setAvailability] = useState(null);
   const [checking, setChecking] = useState(false);
@@ -119,7 +122,7 @@ const RoomDetails = () => {
 
     try {
       const { data } = await axios.post(
-        "/api/bookings",
+        "/api/bookings/create-booking",
         {
           hotel: room.hotel._id,
           room: room._id,
@@ -225,10 +228,7 @@ const RoomDetails = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 text-gray-700 text-sm">
           {/* Bed Type */}
           <div className="flex items-center gap-3 p-4 rounded-xl border border-emerald-50 shadow-sm hover:shadow-md transition">
-            <img
-              src="https://cdn-icons-png.flaticon.com/128/3170/3170733.png"
-              className="w-8 h-8 opacity-80"
-            />
+            <IoBed className="text-xl mr-2" />
             <div>
               <p className="font-semibold">Bed Type</p>
               <p className="text-gray-500">{room.bedType || "King Size Bed"}</p>
@@ -237,10 +237,7 @@ const RoomDetails = () => {
 
           {/* Max Guests */}
           <div className="flex items-center gap-3 p-4 rounded-xl border border-emerald-50 shadow-sm hover:shadow-md transition">
-            <img
-              src="https://cdn-icons-png.flaticon.com/128/747/747376.png"
-              className="w-8 h-8 opacity-80"
-            />
+            <IoPeopleOutline className="text-xl mr-2" />
             <div>
               <p className="font-semibold">Max Guests</p>
               <p className="text-gray-500">{room.capacity || 4} Guests</p>
@@ -249,10 +246,7 @@ const RoomDetails = () => {
 
           {/* Cancellation */}
           <div className="flex items-center gap-3 p-4 rounded-xl border border-emerald-50 shadow-sm hover:shadow-md transition">
-            <img
-              src="https://cdn-icons-png.flaticon.com/128/992/992703.png"
-              className="w-8 h-8 opacity-80"
-            />
+            <MdCancel className="text-xl mr-2" />
             <div>
               <p className="font-semibold">Cancellation</p>
               <p className="text-gray-500">Free before 24 hrs</p>
@@ -295,6 +289,7 @@ const RoomDetails = () => {
               <input
                 type="date"
                 value={checkIn}
+                 min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setCheckIn(e.target.value)}
                 className="w-full rounded-xl border border-gray-300 px-3 py-3 bg-white shadow-sm outline-none focus:ring-2 focus:ring-emerald-500"
               />
@@ -308,6 +303,7 @@ const RoomDetails = () => {
               <input
                 type="date"
                 value={checkOut}
+                min={checkIn || new Date().toISOString().split("T")[0]}
                 onChange={(e) => setCheckOut(e.target.value)}
                 className="w-full rounded-xl border border-gray-300 px-3 py-3 bg-white shadow-sm outline-none focus:ring-2 focus:ring-emerald-500"
               />

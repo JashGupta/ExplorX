@@ -9,23 +9,20 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Hotels", path: "/hotels" },
-    { name: "Why Us", path: "#whyUs" },
-    { name: "Contact Us", path: "#contact" },
+    { name: "Why Us", path: "/#whyUs" },
+    { name: "Contact Us", path: "/#contact" },
   ];
+  const userLinks = [{ name: "My Bookings", path: "/my-bookings" }];
+
+  const pagesWithBorder = ["/hotels", "/my-bookings", "/about", "/contact"];
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const location = useLocation();
 
-  const {
-    user,
-    logout,
-    setShowLogin,
-    isOwner,
-    navigate,
-    setShowHotelReg,
-  } = useAppContext();
+  const { user, logout, setShowLogin, isOwner, navigate, setShowHotelReg } =
+    useAppContext();
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -45,26 +42,45 @@ const Navbar = () => {
         isScrolled
           ? "bg-white/60 text-emerald-900 backdrop-blur-md py-1 md:py-2"
           : "py-2 :py-3 backdrop-blur-xs"
+      } ${
+        pagesWithBorder.includes(location.pathname)
+          ? "border-b border-gray-300"
+          : ""
       }`}
     >
       {/* Logo */}
-      <Link to="/">
+      <Link
+        to="/"
+        onClick={()=> {window.scrollTo({top: 0, behavior: "smooth"})}}
+      >
         <img src={"/logo.png"} alt="logo" className="h-16" />
       </Link>
 
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center gap-4 lg:gap-8">
         {navLinks.map((link, i) => (
-          <a
+          <Link
             key={i}
-            href={link.path}
+            to={link.path}
             className={`group flex flex-col gap-0.5 ${
               isScrolled ? "" : "text-white"
             }`}
           >
             {link.name}
-          </a>
+          </Link>
         ))}
+        {user &&
+          userLinks.map((link, i) => (
+            <Link
+              key={i}
+              to={link.path}
+              className={`group flex flex-col gap-0.5 ${
+                isScrolled ? "" : "text-white"
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
 
         {user && (
           <button
@@ -72,9 +88,7 @@ const Navbar = () => {
               isScrolled ? "" : "text-white"
             } transition-all`}
             onClick={() => {
-              isOwner
-                ? navigate("/owner/dashboard")
-                : setShowHotelReg(true);
+              isOwner ? navigate("/owner/dashboard") : setShowHotelReg(true);
             }}
           >
             {isOwner ? "Dashboard" : "List your Hotel"}
@@ -84,9 +98,7 @@ const Navbar = () => {
 
       {/* Desktop Right */}
       <div className="hidden md:flex items-center gap-4">
-        <IoIosSearch
-          className={`text-2xl ${isScrolled ? "" : "text-white"}`}
-        />
+        <IoIosSearch className={`text-2xl ${isScrolled ? "" : "text-white"}`} />
 
         {!user ? (
           <button
@@ -135,11 +147,7 @@ const Navbar = () => {
         </button>
 
         {navLinks.map((link, i) => (
-          <a
-            key={i}
-            href={link.path}
-            onClick={() => setIsMenuOpen(false)}
-          >
+          <a key={i} href={link.path} onClick={() => setIsMenuOpen(false)}>
             {link.name}
           </a>
         ))}
@@ -148,9 +156,7 @@ const Navbar = () => {
           <button
             className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
             onClick={() => {
-              isOwner
-                ? navigate("/owner/dashboard")
-                : setShowHotelReg(true);
+              isOwner ? navigate("/owner/dashboard") : setShowHotelReg(true);
               setIsMenuOpen(false);
             }}
           >
