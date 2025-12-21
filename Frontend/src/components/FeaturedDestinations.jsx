@@ -40,7 +40,7 @@ const FeaturedDestinations = () => {
         </div>
         <Link
           to={"/hotels"}
-          className="px-4 py-2 rounded-md border text-sm border-gray-300 cursor-pointer hover:bg-green-50 mt-5 md:mt-8 self-end"
+          className="px-4 py-2 rounded-md border text-sm border-gray-300 cursor-pointer hover:bg-green-50 self-end text-emerald-800"
         >
           <button>view all Destinations</button>
         </Link>

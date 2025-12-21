@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaTachometerAlt, FaPlusSquare, FaList, FaBars, FaTimes } from "react-icons/fa";
+import { FaTachometerAlt, FaPlusSquare, FaList, FaBars, FaTimes, FaHotel } from "react-icons/fa";
 
 const OwnerSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +42,7 @@ const OwnerSidebar = () => {
               }`
             }
           >
-            <FaTachometerAlt className="text-emerald-800" /> My Hotels
+            <FaHotel className="text-emerald-800" /> My Hotels
           </NavLink>
 
           <NavLink

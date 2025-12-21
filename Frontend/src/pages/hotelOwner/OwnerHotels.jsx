@@ -52,7 +52,7 @@ const OwnerHotels = () => {
               <img
                 src={hotel.hotelImages?.[0]?.url || "/hotel-placeholder.jpg"}
                 alt={hotel.name}
-                className="w-full md:w-1/2 h-60 object-cover overflow-hidden rounded-l-xl"
+                className="w-full md:w-2/3 h-68 object-cover overflow-hidden rounded-l-xl"
               />
 
               {/* Content */}

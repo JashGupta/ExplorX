@@ -121,7 +121,7 @@ const AllHotels = () => {
                 <img
                   src={hotel.hotelImages[0].url}
                   alt={hotel.name}
-                  className="w-full md:w-1/2 h-60 object-cover rounded-xl"
+                  className="w-full md:w-2/3 h-60 overflow-hidden object-cover rounded-xl"
                 />
                 {/* Premium Badge */}
                 {(!hotel.rating || hotel.rating === 0) &&
@@ -176,7 +176,7 @@ const AllHotels = () => {
                   </div>
 
                   <span className="text-lg font-normal text-gray-700 mt-4">
-                     starting from  <span className="font-bold text-gray-900">₹{hotel.startingPrice}</span> /night
+                    Starting from  <span className="font-bold text-gray-900">₹{hotel.startingPrice}</span> /night
                   </span>
                 </div>
               </div>

@@ -137,3 +137,75 @@ export const toggleAvailability = async (req, res) => {
       .json({ success: false, message: "Error in toggle availability" });
   }
 };
+
+export const editRoomDetails = async (req, res) => {
+  try {
+    const roomId = req.params.id;
+    const room = await Room.findById(roomId).populate("hotel");
+
+    if (!room) {
+      return res.json({ success: false, message: "Room not found" });
+    }
+
+    // Check if the logged-in user is the owner of the hotel
+    if (room.hotel.owner.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized action" });
+    }
+
+    const {
+      roomType,
+      price,
+      roomDescription,
+      capacity,
+      active,
+      bedType,
+      amenities,
+    } = req.body;
+
+    // Update fields if provided
+    if (roomType) room.roomType = roomType;
+    if (price) room.price = price;
+    if (roomDescription) room.roomDescription = roomDescription;
+    if (capacity) room.capacity = capacity;
+    if (active !== undefined) room.active = active;
+    if (bedType) room.bedType = bedType;
+    if (amenities && Array.isArray(amenities) && amenities.length >= 3) {
+      room.amenities = amenities;
+    } else if (amenities) {
+      return res.status(400).json({
+        success: false,
+        message: "At least 3 amenities are required.",
+      });
+    }
+
+    // Handle new room images if provided
+    if (req.files && req.files.length > 0) {
+      // Delete existing images from Cloudinary
+      const deletePromises = room.roomImages.map((img) =>
+        cloudinary.uploader.destroy(img.public_id)
+      );
+      await Promise.all(deletePromises);
+
+      // Upload new images
+      const uploadRoomImages = req.files.map(async (file) => {
+        const result = await cloudinary.uploader.upload(file.path);
+        return {
+          url: result.secure_url,
+          public_id: result.public_id,
+        };
+      });
+
+      room.roomImages = await Promise.all(uploadRoomImages);
+    }
+
+    await room.save();
+
+    res.json({ success: true, message: "Room details updated", room });
+
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error editing room details" });
+  }
+}

@@ -7,7 +7,7 @@ const HotelCard = ({ hotel }) => {
   return (
     <Link
       to={`/hotels/${hotel._id}`}
-      className="flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md bg-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-102 transition-transform duration-300 overflow-hidden group"
+      className="mb-8 flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md bg-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-102 transition-transform duration-300 overflow-hidden group"
     >
       {/* Hotel Image */}
       <div className="relative">
@@ -54,8 +54,8 @@ const HotelCard = ({ hotel }) => {
 
         {/* Price & Button */}
         <div className="mt-4 flex items-center justify-between">
-          <p className="text-base sm:text-lg font-bold text-slate-900">
-            ₹{hotel.startingPrice.toLocaleString()} / night
+          <p className="sm:text-sm font-light text-gray-700">
+            Starts <span className="text-sm font-medium text-shadow-emerald-950">₹{hotel.startingPrice}</span> /night
           </p>
           <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm sm:text-base font-medium px-4 py-2 rounded-xl shadow-md transition-all">
             Book Now

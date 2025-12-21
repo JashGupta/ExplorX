@@ -21,9 +21,12 @@ export const AppProvider = ({ children }) => {
   const [showEditUserDetails, setShowEditUserDetails] = useState(false);
 
   const [selectedHotel, setSelectedHotel] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   const [showHotelReg, setShowHotelReg] = useState(false);
   const [showEditHotelDetails, setShowEditHotelDetails] = useState(false);
+
+  const [showEditRoomDetails, setShowEditRoomDetails] = useState(false);
 
   const [searchedCities, setSearchedCities] = useState([]);  
 
@@ -102,6 +105,12 @@ export const AppProvider = ({ children }) => {
 
     selectedHotel,
     setSelectedHotel,
+
+    showEditRoomDetails,
+    setShowEditRoomDetails,
+
+    selectedRoom,
+    setSelectedRoom,
 
     isOwner,
     setIsOwner,

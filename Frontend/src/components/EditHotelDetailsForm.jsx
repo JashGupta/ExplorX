@@ -145,13 +145,13 @@ const EditHotelDetailsForm = () => {
       });
 
       if (data.success) {
-        toast.success(data.message);
+        toast.success("Hotel details updated successfully");
         setShowEditHotelDetails(false);
       } else {
-        toast.error(data.message);
+        toast.error(data.response?.data?.message || "Registration failed");
       }
     } catch (error) {
-      toast.error("Registration failed: " + error.message);
+      toast.error("Registration failed: " + error.response?.data?.message || error.message);
     }
   };
 
@@ -171,7 +171,7 @@ const EditHotelDetailsForm = () => {
           Edit Hotel Details
         </h2>
         <p className="text-center text-gray-200 mb-6 text-sm">
-          Fill in the details carefully — first impression matters!
+          Fill in the details carefully !
         </p>
 
         <form

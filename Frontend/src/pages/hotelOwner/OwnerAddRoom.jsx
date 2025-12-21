@@ -125,8 +125,7 @@ const AddRoom = () => {
       <div className="p-4 sm:px-8 text-emerald-950 shrink-0">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">Add New Room</h1>
         <p className="text-emerald-900 max-w-full sm:max-w-[75%] text-sm sm:text-base">
-          Add a new room to your hotel listing. Upload images, set the price,
-          capacity, and select amenities.
+          Create a new room for your selected hotel by adding images, pricing, capacity, and amenities.
         </p>
       </div>
 
@@ -187,7 +186,8 @@ const AddRoom = () => {
                 value={roomDescription}
                 onChange={(e) => setRoomDescription(e.target.value)}
                 className="border rounded-lg p-3 w-full h-28 focus:ring-2 focus:ring-emerald-400 outline-none"
-                placeholder="Describe the room, view, interior, space, etc."
+                placeholder="Describe the room, view, size, interiors, or special features guests should know about"
+
               ></textarea>
             </div>
             <div className="flex-1">

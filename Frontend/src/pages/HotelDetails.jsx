@@ -137,8 +137,8 @@ const HotelDetails = () => {
             : "Experience luxury and comfort like never before."}
         </p>
 
-        <span className="text-emerald-950 font-semibold text-3xl">
-          Starting from ₹{hotel.startingPrice} /night
+        <span className="text-gray-700 font-light text-2xl">
+          Starting from <span className="text-emerald-950 font-medium text-3xl">₹{hotel.startingPrice}</span> /night
         </span>
       </div>
 
