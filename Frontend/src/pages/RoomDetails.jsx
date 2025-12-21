@@ -118,13 +118,6 @@ const RoomDetails = () => {
           amount,
           checkIn,
           checkOut,
-          snapshot: {
-            hotelName: room.hotel.name,
-            roomType: room.roomType,
-            image: room.roomImages[0]?.url,
-            location: room.hotel.city,
-            price: room.price,
-          },
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -147,7 +147,13 @@ export const getHotel = async (req, res) => {
 export const getMyHotels = async (req, res) => {
   try {
     const owner = req.user._id;
-    const hotels = await Hotel.find({ owner });
+    const hotels = await Hotel.find({ owner }).populate("owner").populate({
+      path: "rooms",
+      populate: { 
+        path: "bookings",
+        populate: { path: "user"}
+      },
+    });
 
     res.json({ success: true, hotels });
   } catch (error) {

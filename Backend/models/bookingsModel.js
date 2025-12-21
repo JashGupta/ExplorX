@@ -2,26 +2,20 @@ import mongoose from "mongoose";
 
 export const bookingSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hotel",
       required: true,
     },
-    room: { type: mongoose.Schema.Types.ObjectId,
-      ref: "Room",
-      required: true
-    },
+    room: { type: mongoose.Schema.Types.ObjectId, ref: "Room", required: true },
 
     snapshot: {
-      hotelName: String,
-      roomType: String,
-      image: String,
-      location: String,
-      price: Number,
+      hotelName: { type: String, required: true },
+      roomType: { type: String, required: true },
+      image: { type: String, required: true },
+      location: { type: String, required: true },
+      price: { type: Number, required: true },
     },
 
     guests: { type: Number, default: 1 },
@@ -33,14 +27,18 @@ export const bookingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Pending", "Confirmed", "Cancelled", "Paid", "Unpaid"],
+      enum: ["Pending", "Confirmed", "Cancelled", "Completed"],
       default: "Pending",
     },
-    
+
     payment: {
-      provider: String,
-      transactionId: String,
-      status: String,
+      provider: { type: String },
+      transactionId: { type: String },
+      status: {
+        type: String,
+        enum: ["Unpaid", "Paid", "Refunded", "Failed"],
+        default: "Unpaid",
+      },
     },
   },
   { timestamps: true }

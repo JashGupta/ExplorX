@@ -4,7 +4,14 @@ import Hotel from "../models/hotelModel.js";
 
 export const createBooking = async (req, res) => {
   try {
-    const { room: roomId, hotel: hotelId, checkIn, checkOut, amount, guests } = req.body;
+    const {
+      room: roomId,
+      hotel: hotelId,
+      checkIn,
+      checkOut,
+      amount,
+      guests,
+    } = req.body;
     const userId = req.user._id;
 
     const room = await Room.findById(roomId).populate("hotel");
@@ -13,8 +20,14 @@ export const createBooking = async (req, res) => {
     const hotel = await Hotel.findById(hotelId);
     if (!hotel) return res.status(404).json({ message: "Hotel not found" });
 
-    if (guests && room.capacity && guests > room.capacity) {
-      return res.status(400).json({ message: `Max capacity is ${room.capacity} guests` });
+    if (!roomId || !hotelId || !checkIn || !checkOut || !amount) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (guests > room.capacity) {
+      return res
+        .status(400)
+        .json({ message: `Max capacity is ${room.capacity} guests` });
     }
 
     const existing = await Booking.findOne({
@@ -24,13 +37,15 @@ export const createBooking = async (req, res) => {
     });
 
     if (existing) {
-      return res.status(400).json({ message: "Room is not available on these dates" });
+      return res
+        .status(400)
+        .json({ message: "Room is not available on these dates" });
     }
 
     const snapshot = {
       hotelName: hotel.name,
       roomType: room.roomType,
-      image: room.roomImages?.[0]?.url || "",
+      image: room.roomImages?.[0]?.url,
       location: hotel.city,
       price: room.price,
     };
@@ -55,5 +70,19 @@ export const createBooking = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const getMyBookings = async (req, res) => {
+  try {
+    const user = req.user._id;
+    const bookings = await Booking.find({ user }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      bookings,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch bookings" });
   }
 };

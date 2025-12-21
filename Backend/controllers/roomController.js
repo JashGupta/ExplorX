@@ -100,3 +100,21 @@ export const getRoom = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const toggleAvailability = async (req, res) => {
+  try {
+    const roomId = req.params.id;
+    
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ success: false, message: "Room not found" });
+    }
+    room.active = !room.active;
+    await room.save();
+    res.json({ success: true, message: "Room availability toggled", room });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Error in toggle availability" });
+  }
+}
