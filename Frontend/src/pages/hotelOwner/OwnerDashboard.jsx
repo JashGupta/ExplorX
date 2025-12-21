@@ -26,7 +26,7 @@ const OwnerDashboard = () => {
   }, [hotels, selectedHotel]);
 
   return (
-    <div className="p-2 sm:pt-24 sm:pl-64">
+    <div className="p-2 sm:pt-24 sm:pl-64 h-screen overflow-hidden flex flex-col">
       {/* Header */}
       <div className="p-4 sm:p-6 text-emerald-950">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">Dashboard</h1>
@@ -98,7 +98,7 @@ const OwnerDashboard = () => {
       </div>
 
       {/* Recent Bookings */}
-      <div className="flex flex-col gap-6 pt-16 px-4 sm:px-6 text-emerald-950">
+      <div className="flex flex-col gap-6 pt-8 px-4 sm:px-6 text-emerald-950">
         <h2 className="text-xl sm:text-2xl font-semibold">Recent Bookings</h2>
         <div className="bg-white shadow-lg rounded-lg max-h-80 overflow-y-auto overflow-x-auto">
           <table className="w-full text-left min-w-[600px]">
