@@ -5,9 +5,8 @@ import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 
 const OwnerListRooms = () => {
-  const { axios } = useAppContext();
+  const { axios, selectedHotel, setSelectedHotel } = useAppContext();
   const [hotels, setHotels] = useState([]);
-  const [selectedHotel, setSelectedHotel] = useState(null);
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -69,14 +68,17 @@ const OwnerListRooms = () => {
           Select Hotel
         </label>
         <select
-          value={selectedHotel}
+          value={selectedHotel._id}
           defaultValue={hotels[0]}
-          onChange={(e) => setSelectedHotel(e.target.value)}
+          onChange={(e) => {
+            const hotel = hotels.find((h) => h._id === e.target.value);
+            setSelectedHotel(hotel);
+          }}
           className="w-full sm:w-96 p-3 rounded-lg border border-emerald-500 focus:outline-none"
         >
           <option value="">-- Choose a Hotel --</option>
           {hotels.map((hotel) => (
-            <option key={hotel} value={hotel}>
+            <option key={hotel._id} value={hotel._id}>
               {hotel.name} ({hotel.city})
             </option>
           ))}

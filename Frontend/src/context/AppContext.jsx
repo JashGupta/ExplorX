@@ -20,9 +20,12 @@ export const AppProvider = ({ children }) => {
   const [showRegister, setShowRegister] = useState(false);
   const [showEditUserDetails, setShowEditUserDetails] = useState(false);
 
-  const [showHotelReg, setShowHotelReg] = useState(false);
+  const [selectedHotel, setSelectedHotel] = useState(null);
 
-  const [searchedCities, setSearchedCities] = useState([]);
+  const [showHotelReg, setShowHotelReg] = useState(false);
+  const [showEditHotelDetails, setShowEditHotelDetails] = useState(false);
+
+  const [searchedCities, setSearchedCities] = useState([]);  
 
   /** ✅ Attach Token Automatically **/
   useEffect(() => {
@@ -93,6 +96,12 @@ export const AppProvider = ({ children }) => {
 
     showHotelReg,
     setShowHotelReg,
+
+    showEditHotelDetails,
+    setShowEditHotelDetails,
+
+    selectedHotel,
+    setSelectedHotel,
 
     isOwner,
     setIsOwner,

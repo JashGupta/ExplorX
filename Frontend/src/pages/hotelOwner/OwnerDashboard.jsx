@@ -4,9 +4,8 @@ import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 import { useAppContext } from "../../context/AppContext";
 
 const OwnerDashboard = () => {
-  const { axios } = useAppContext();
+  const { axios, selectedHotel, setSelectedHotel } = useAppContext();
   const [hotels, setHotels] = useState([]);
-  const [selectedHotel, setSelectedHotel] = useState(null);
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -43,14 +42,16 @@ const OwnerDashboard = () => {
           Select Hotel
         </label>
         <select
-          value={selectedHotel}
-          defaultValue={hotels[0]}
-          onChange={(e) => setSelectedHotel(e.target.value)}
+          value={selectedHotel?._id}
+          onChange={(e) => {
+            const hotel = hotels.find((h) => h._id === e.target.value);
+            setSelectedHotel(hotel);
+          }}
           className="w-full sm:w-96 p-3 rounded-lg border border-emerald-500 focus:outline-none"
         >
           <option value="">-- Choose a Hotel --</option>
           {hotels.map((hotel) => (
-            <option key={hotel} value={hotel}>
+            <option key={hotel._id} value={hotel._id}>
               {hotel.name} ({hotel.city})
             </option>
           ))}

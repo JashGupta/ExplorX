@@ -1,5 +1,5 @@
 import express from 'express';
-import { getHotel, getHotels, getMyHotels, registerHotel } from '../controllers/hotelController.js';
+import { editHotelDetails, getHotel, getHotels, getMyHotels, registerHotel } from '../controllers/hotelController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import upload from '../middlewares/uploadMiddleware.js';
 
@@ -9,5 +9,6 @@ hotelRouter.post('/register',authMiddleware, upload.array('hotelImages', 4), reg
 hotelRouter.get('/get-hotels', getHotels);
 hotelRouter.get('/get-my-hotels', authMiddleware, getMyHotels);
 hotelRouter.get('/:id', getHotel);
+hotelRouter.put('/edit/:id', authMiddleware, upload.array('hotelImages', 4), editHotelDetails);
 
 export default hotelRouter;

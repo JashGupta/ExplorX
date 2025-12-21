@@ -18,10 +18,12 @@ import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import EditUserDetailsForm from "./components/EditUserDetailsForm";
 import RoomDetails from "./pages/RoomDetails";
+import OwnerHotels from "./pages/hotelOwner/OwnerHotels";
+import EditHotelDetailsForm from "./components/EditHotelDetailsForm";
 
 function App() {
 
-  const {showLogin, showRegister, showEditUserDetails, showHotelReg} = useAppContext();
+  const {showLogin, showRegister, showEditUserDetails, showHotelReg, showEditHotelDetails} = useAppContext();
   const location = useLocation();
   const isOwner = location.pathname.startsWith("/owner");
 
@@ -48,6 +50,7 @@ function App() {
         {showLogin && <LoginForm />}
         {showRegister && <RegisterForm />}
         {showEditUserDetails && <EditUserDetailsForm />}
+        {showEditHotelDetails && <EditHotelDetailsForm />}
         {isOwner ? (
           <div>
             <OwnerNavbar />
@@ -65,6 +68,7 @@ function App() {
           <Route path="/my-bookings" element={<MyBookings />} />
 
           <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+          <Route path="/owner/my-hotels" element={<OwnerHotels />} />
           <Route path="/owner/add-room" element={<OwnerAddRoom />} />
           <Route path="/owner/list-room" element={<OwnerListRoom />} />
         </Routes>

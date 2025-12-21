@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
 import { RiMenu3Line } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
-import { FiLogOut, FiEdit } from "react-icons/fi";
+import { FiLogOut, FiEdit, FiHome } from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
 
 const Navbar = () => {
@@ -23,8 +23,15 @@ const Navbar = () => {
 
   const location = useLocation();
 
-  const { user, logout, setShowLogin, setShowEditUserDetails, isOwner, navigate, setShowHotelReg } =
-    useAppContext();
+  const {
+    user,
+    logout,
+    setShowLogin,
+    setShowEditUserDetails,
+    isOwner,
+    navigate,
+    setShowHotelReg,
+  } = useAppContext();
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -133,7 +140,7 @@ const Navbar = () => {
       animate-in fade-in zoom-in
       ${
         isScrolled
-          ? "bg-emerald-950/90 text-white"
+          ? "bg-emerald-950/80 text-white"
           : "bg-white/90 text-emerald-900"
       }`}
           >
@@ -155,8 +162,8 @@ const Navbar = () => {
                   setShowEditUserDetails(true);
                 }}
                 className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
-          transition-all duration-200
-          hover:bg-emerald-900/10"
+          transition-all duration-100
+          hover:bg-emerald-900/40"
               >
                 <FiEdit className="text-lg opacity-80" />
                 Edit Profile
@@ -165,10 +172,24 @@ const Navbar = () => {
               <button
                 onClick={() => {
                   setOpenDropdown(false);
+                  setShowHotelReg(true);
+                }}
+                className="
+                  w-full px-5 py-3 flex items-center gap-3 transition-all duration-100
+                  text-sm font-semibold tracking-wide hover:bg-emerald-900/40
+                "
+              >
+                <FiHome className="text-lg opacity-80" />
+                List new Hotel
+              </button>
+
+              <button
+                onClick={() => {
+                  setOpenDropdown(false);
                   logout();
                 }}
                 className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
-          text-red-500 transition-all duration-200
+          text-red-500 transition-all duration-200 border-t border-red-700/20 mt-2
           hover:bg-red-500/10"
               >
                 <FiLogOut className="text-lg" />

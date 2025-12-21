@@ -34,6 +34,18 @@ const OwnerSidebar = () => {
           </NavLink>
 
           <NavLink
+            to="/owner/my-hotels"
+
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-4 hover:bg-emerald-50 hover:text-emerald-800 ${
+                isActive ? "bg-emerald-50 text-emerald-900 font-medium border-r-4 border-emerald-800" : ""
+              }`
+            }
+          >
+            <FaTachometerAlt className="text-emerald-800" /> My Hotels
+          </NavLink>
+
+          <NavLink
             to="/owner/add-room"
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-4 hover:bg-emerald-50 hover:text-emerald-800 ${
@@ -52,7 +64,7 @@ const OwnerSidebar = () => {
               }`
             }
           >
-            <FaList className="text-emerald-800" /> List Room
+            <FaList className="text-emerald-800" /> List Rooms
           </NavLink>
         </div>
       </nav>

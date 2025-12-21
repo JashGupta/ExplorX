@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 export const addRoom = async (req, res) => {
   try {
-    const { hotel, roomtype, price } = req.body;
+    const { hotel, roomType, price, roomDescription, capacity, active, bedType, amenities } = req.body;
 
     // Validate hotel
     const userHotel = await Hotel.findOne({ _id: hotel, owner: req.user._id });
@@ -15,20 +15,29 @@ export const addRoom = async (req, res) => {
       });
     }
 
-    if(!roomtype, hotel, price){
+    if (!roomType || !price) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all required fields: hotel, room type, atleast one room image, and price",
+        message:
+          "Please provide all required fields:room type, and price",
       });
     }
 
-    if (price <= 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Price must be a positive number" });
+    if (!amenities || !Array.isArray(amenities) || amenities.length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: "At least 3 amenities are required.",
+      });
     }
 
-    if(!req.files || req.files.length === 0){
+    if (!price || Number(price) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Price is required and must be greater than 0.",
+      });
+    }
+
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         success: false,
         message: "At least one room image is required",
@@ -49,8 +58,15 @@ export const addRoom = async (req, res) => {
 
     // Create room
     const newRoom = await Room.create({
-      ...req.body,
+      hotel : userHotel._id,
+      roomType,
+      price,
       roomImages,
+      roomDescription,
+      capacity,
+      active: active !== undefined ? active : true,
+      bedType,
+      amenities,
     });
 
     // Add room to hotel.rooms[]
@@ -104,17 +120,20 @@ export const getRoom = async (req, res) => {
 export const toggleAvailability = async (req, res) => {
   try {
     const roomId = req.params.id;
-    
+
     const room = await Room.findById(roomId);
     if (!room) {
-      return res.status(404).json({ success: false, message: "Room not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Room not found" });
     }
     room.active = !room.active;
     await room.save();
     res.json({ success: true, message: "Room availability toggled", room });
-
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Error in toggle availability" });
+    res
+      .status(500)
+      .json({ success: false, message: "Error in toggle availability" });
   }
-}
+};

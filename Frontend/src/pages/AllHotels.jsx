@@ -175,8 +175,8 @@ const AllHotels = () => {
                     </ul>
                   </div>
 
-                  <span className="text-lg font-bold text-gray-900 mt-4">
-                    ₹{hotel.startingPrice}
+                  <span className="text-lg font-normal text-gray-700 mt-4">
+                     starting from  <span className="font-bold text-gray-900">₹{hotel.startingPrice}</span> /night
                   </span>
                 </div>
               </div>

@@ -5,9 +5,8 @@ import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 
 const AddRoom = () => {
-  const { axios, token } = useAppContext();
+  const { axios, token, selectedHotel, setSelectedHotel } = useAppContext();
 
-  const [hotel, setHotel] = useState("");
   const [roomType, setRoomType] = useState("Standard Room");
   const [roomDescription, setRoomDescription] = useState("");
   const [bedType, setBedType] = useState("Double Bed");
@@ -58,6 +57,12 @@ const AddRoom = () => {
     fetchHotels();
   }, [axios]);
 
+  useEffect(() => {
+    if (hotels.length > 0 && !selectedHotel) {
+      setSelectedHotel(hotels[0]);
+    }
+  }, [hotels, selectedHotel]);
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files).slice(0, 4);
     setRoomImages(files);
@@ -75,7 +80,7 @@ const AddRoom = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("hotel", hotel);
+      formData.append("hotel", selectedHotel._id);
       formData.append("roomType", roomType);
       formData.append("roomDescription", roomDescription);
       formData.append("bedType", bedType);
@@ -96,7 +101,6 @@ const AddRoom = () => {
       if (data.success) {
         toast.success(data.message || "Room added successfully!");
         // reset form
-        setHotel("");
         setRoomType("");
         setRoomDescription("");
         setBedType("");
@@ -109,7 +113,9 @@ const AddRoom = () => {
         toast.error(data.message || "Failed to add room");
       }
     } catch (error) {
-      toast.error("Error adding room: " + error.message);
+      toast.error(
+        "Error adding room: " + error.response?.data?.message || error.message
+      );
     }
   };
 
@@ -131,24 +137,31 @@ const AddRoom = () => {
             {/* Hotel & Room Type */}
             <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
               <div className="flex-1">
-                <label className="block font-semibold mb-2">Select Hotel <span className="text-red-600">*</span></label>
+                <label className="block font-semibold mb-2">
+                  Select Hotel <span className="text-red-600">*</span>
+                </label>
                 <select
-                  value={hotel}
-                  onChange={(e) => setHotel(e.target.value)}
+                  value={selectedHotel?._id}
+                  onChange={(e) => {
+                    const hotel = hotels.find((h) => h._id === e.target.value);
+                    setSelectedHotel(hotel);
+                  }}
                   className="border rounded-lg p-3 w-full focus:ring-2 focus:ring-emerald-400 outline-none"
                   required
                 >
                   <option value="">Choose Hotel</option>
-                  {hotels.map((h) => (
-                    <option key={h._id} value={h._id}>
-                      {h.name}
+                  {hotels.map((hotel) => (
+                    <option key={hotel._id} value={hotel._id}>
+                      {hotel.name}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="flex-1">
-                <label className="block font-semibold mb-2">Room Type <span className="text-red-600">*</span></label>
+                <label className="block font-semibold mb-2">
+                  Room Type <span className="text-red-600">*</span>
+                </label>
                 <select
                   value={roomType}
                   onChange={(e) => setRoomType(e.target.value)}
@@ -196,7 +209,9 @@ const AddRoom = () => {
             {/* Price & Capacity */}
             <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
               <div className="flex-1">
-                <label className="block font-semibold mb-2">Price (₹) <span className="text-red-600">*</span></label>
+                <label className="block font-semibold mb-2">
+                  Price (₹) <span className="text-red-600">*</span>
+                </label>
                 <input
                   type="number"
                   value={price}
@@ -244,7 +259,8 @@ const AddRoom = () => {
             {/* Image Upload */}
             <div>
               <label className="block font-semibold mb-3">
-                Upload Room images (Max 4) <span className="text-red-600">*</span>
+                Upload Room images (Max 4){" "}
+                <span className="text-red-600">*</span>
               </label>
               <input
                 type="file"
