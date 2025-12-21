@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
 import { RiMenu3Line } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
+import { FiLogOut, FiEdit } from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
 
 const Navbar = () => {
@@ -18,10 +19,11 @@ const Navbar = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
 
   const location = useLocation();
 
-  const { user, logout, setShowLogin, isOwner, navigate, setShowHotelReg } =
+  const { user, logout, setShowLogin, setShowEditUserDetails, isOwner, navigate, setShowHotelReg } =
     useAppContext();
 
   useEffect(() => {
@@ -51,7 +53,9 @@ const Navbar = () => {
       {/* Logo */}
       <Link
         to="/"
-        onClick={()=> {window.scrollTo({top: 0, behavior: "smooth"})}}
+        onClick={() => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
       >
         <img src={"/logo.png"} alt="logo" className="h-16" />
       </Link>
@@ -112,16 +116,66 @@ const Navbar = () => {
             Login
           </button>
         ) : (
-          <button
-            onClick={logout}
-            className={`px-6 py-2 rounded-full transition-all duration-500 ${
-              isScrolled
-                ? "bg-emerald-900 text-white"
-                : "bg-white text-emerald-900"
-            }`}
-          >
-            Logout
+          <button onClick={() => setOpenDropdown(!openDropdown)}>
+            <img
+              src={user.profilePic}
+              alt="profile"
+              className="w-10 h-10 rounded-full object-cover"
+            />
           </button>
+        )}
+        {/* Dropdown */}
+        {openDropdown && (
+          <div
+            className={`absolute right-0 top-0 mt-20 mr-2 w-56 z-50 rounded-2xl
+      backdrop-blur-xl shadow-2xl border border-white/10
+      transform transition-all duration-200 origin-top-right
+      animate-in fade-in zoom-in
+      ${
+        isScrolled
+          ? "bg-emerald-950/90 text-white"
+          : "bg-white/90 text-emerald-900"
+      }`}
+          >
+            {/* User Info */}
+            <div className="px-5 py-4 border-b border-emerald-700/20">
+              <p className="text-sm font-semibold tracking-wide truncate">
+                {user?.username}
+              </p>
+              <p className="text-xs opacity-70 truncate mt-0.5">
+                {user?.email}
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="py-2">
+              <button
+                onClick={() => {
+                  setOpenDropdown(false);
+                  setShowEditUserDetails(true);
+                }}
+                className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
+          transition-all duration-200
+          hover:bg-emerald-900/10"
+              >
+                <FiEdit className="text-lg opacity-80" />
+                Edit Profile
+              </button>
+
+              <button
+                onClick={() => {
+                  setOpenDropdown(false);
+                  logout();
+                }}
+                className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
+          text-red-500 transition-all duration-200
+          hover:bg-red-500/10"
+              >
+                <FiLogOut className="text-lg" />
+                Logout
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

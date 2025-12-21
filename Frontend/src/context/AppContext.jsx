@@ -18,6 +18,7 @@ export const AppProvider = ({ children }) => {
 
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [showEditUserDetails, setShowEditUserDetails] = useState(false);
 
   const [showHotelReg, setShowHotelReg] = useState(false);
 
@@ -40,8 +41,9 @@ export const AppProvider = ({ children }) => {
 
     try {
       const { data } = await axios.get("/api/user");
-
+      
       if (data.success) {
+        
         setUser(data.user);
         setIsOwner(data.user.role === "hotelOwner");
         setSearchedCities(data.user.recentSearchedCities || []);
@@ -85,6 +87,9 @@ export const AppProvider = ({ children }) => {
 
     showRegister,
     setShowRegister,
+
+    showEditUserDetails,
+    setShowEditUserDetails,
 
     showHotelReg,
     setShowHotelReg,

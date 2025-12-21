@@ -16,11 +16,12 @@ import OwnerSidebar from "./components/hotelOwner/OwnerSidebar";
 import { useAppContext } from "./context/AppContext";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
+import EditUserDetailsForm from "./components/EditUserDetailsForm";
 import RoomDetails from "./pages/RoomDetails";
 
 function App() {
 
-  const {showLogin, showRegister, showHotelReg} = useAppContext();
+  const {showLogin, showRegister, showEditUserDetails, showHotelReg} = useAppContext();
   const location = useLocation();
   const isOwner = location.pathname.startsWith("/owner");
 
@@ -46,6 +47,7 @@ function App() {
         {showHotelReg && <RegisterHotel />}
         {showLogin && <LoginForm />}
         {showRegister && <RegisterForm />}
+        {showEditUserDetails && <EditUserDetailsForm />}
         {isOwner ? (
           <div>
             <OwnerNavbar />
