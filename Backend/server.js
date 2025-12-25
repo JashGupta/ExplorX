@@ -14,7 +14,7 @@ connectCloudinary();
 const app = express();
 
 app.use(cors({
-  origin: ["https://explorx.vercel.app"],
+  origin: ["https://explor-x.vercel.app"],
   credentials: true
 }));
 app.use(express.json());
