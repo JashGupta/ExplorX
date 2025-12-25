@@ -24,7 +24,7 @@ import EditRoomDetailsForm from "./components/EditRoomDetailsForm";
 
 function App() {
 
-  const {showLogin, showRegister, showEditUserDetails, showHotelReg, showEditHotelDetails, showEditRoomDetails} = useAppContext();
+  const {showLogin, setShowLogin, showRegister, setShowRegister, showEditUserDetails, setShowEditUserDetails, showHotelReg, setShowHotelReg, showEditHotelDetails, setShowEditHotelDetails, showEditRoomDetails, setShowEditRoomDetails} = useAppContext();
   const location = useLocation();
   const isOwner = location.pathname.startsWith("/owner");
 
@@ -42,9 +42,19 @@ function App() {
     return null;
   };
 
+  useEffect(() => {
+    setShowLogin(false);
+    setShowRegister(false);
+    setShowEditUserDetails(false);
+    setShowHotelReg(false);
+    setShowEditHotelDetails(false);
+    setShowEditRoomDetails(false);
+  }, [location.pathname]);
+
   return (
     <>
-      <div className="min-h-screen flex flex-col">
+      <div
+      className="min-h-screen flex flex-col">
         <Toaster />
         <ScrollToTop />
         {showHotelReg && <RegisterHotel />}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
 import { RiMenu3Line } from "react-icons/ri";
@@ -19,7 +19,9 @@ const Navbar = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const dropdownRef = useRef(null);
 
   const location = useLocation();
 
@@ -44,6 +46,20 @@ const Navbar = () => {
       setIsScrolled(true);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav
@@ -110,31 +126,31 @@ const Navbar = () => {
       {/* Desktop Right */}
       <div className="hidden md:flex items-center gap-4">
         <IoIosSearch className={`text-2xl ${isScrolled ? "" : "text-white"}`} />
-
-        {!user ? (
-          <button
-            onClick={() => setShowLogin(true)}
-            className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${
-              isScrolled
-                ? "text-white bg-emerald-950 hover:bg-emerald-950/80"
-                : "bg-white text-emerald-950 hover:bg-emerald-50"
-            }`}
-          >
-            Login
-          </button>
-        ) : (
-          <button onClick={() => setOpenDropdown(!openDropdown)}>
-            <img
-              src={user.profilePic}
-              alt="profile"
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          </button>
-        )}
-        {/* Dropdown */}
-        {openDropdown && (
-          <div
-            className={`absolute right-0 top-0 mt-20 mr-2 w-56 z-50 rounded-2xl
+        <div ref={dropdownRef}>
+          {!user ? (
+            <button
+              onClick={() => setShowLogin(true)}
+              className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${
+                isScrolled
+                  ? "text-white bg-emerald-950 hover:bg-emerald-950/80"
+                  : "bg-white text-emerald-950 hover:bg-emerald-50"
+              }`}
+            >
+              Login
+            </button>
+          ) : (
+            <button onClick={() => setShowDropdown(!showDropdown)}>
+              <img
+                src={user.profilePic}
+                alt="profile"
+                className="w-10 h-10 rounded-full object-cover ml-2 mt-1"
+              />
+            </button>
+          )}
+          {/* Dropdown */}
+          {showDropdown && (
+            <div
+              className={`absolute right-0 top-0 mt-20 mr-1 w-56 z-50 rounded-2xl
       backdrop-blur-xl shadow-2xl border border-white/10
       transform transition-all duration-200 origin-top-right
       animate-in fade-in zoom-in
@@ -143,61 +159,62 @@ const Navbar = () => {
           ? "bg-emerald-950/80 text-white"
           : "bg-white/90 text-emerald-900"
       }`}
-          >
-            {/* User Info */}
-            <div className="px-5 py-4 border-b border-emerald-700/20">
-              <p className="text-sm font-semibold tracking-wide truncate">
-                {user?.username}
-              </p>
-              <p className="text-xs opacity-70 truncate mt-0.5">
-                {user?.email}
-              </p>
-            </div>
+            >
+              {/* User Info */}
+              <div className="px-5 py-4 border-b border-emerald-700/20">
+                <p className="text-sm font-semibold tracking-wide truncate">
+                  {user?.username}
+                </p>
+                <p className="text-xs opacity-70 truncate mt-0.5">
+                  {user?.email}
+                </p>
+              </div>
 
-            {/* Actions */}
-            <div className="py-2">
-              <button
-                onClick={() => {
-                  setOpenDropdown(false);
-                  setShowEditUserDetails(true);
-                }}
-                className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
+              {/* Actions */}
+              <div className="py-2">
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    setShowEditUserDetails(true);
+                  }}
+                  className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
           transition-all duration-100
           hover:bg-emerald-900/40"
-              >
-                <FiEdit className="text-lg opacity-80" />
-                Edit Profile
-              </button>
+                >
+                  <FiEdit className="text-lg opacity-80" />
+                  Edit Profile
+                </button>
 
-              <button
-                onClick={() => {
-                  setOpenDropdown(false);
-                  setShowHotelReg(true);
-                }}
-                className="
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    setShowHotelReg(true);
+                  }}
+                  className="
                   w-full px-5 py-3 flex items-center gap-3 transition-all duration-100
                   text-sm font-semibold tracking-wide hover:bg-emerald-900/40
                 "
-              >
-                <FiHome className="text-lg opacity-80" />
-                List new Hotel
-              </button>
+                >
+                  <FiHome className="text-lg opacity-80" />
+                  List new Hotel
+                </button>
 
-              <button
-                onClick={() => {
-                  setOpenDropdown(false);
-                  logout();
-                }}
-                className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    logout();
+                  }}
+                  className="w-full px-5 py-3 flex items-center gap-3 text-sm font-medium
           text-red-500 transition-all duration-200 border-t border-red-700/20 mt-2
           hover:bg-red-500/10"
-              >
-                <FiLogOut className="text-lg" />
-                Logout
-              </button>
+                >
+                  <FiLogOut className="text-lg" />
+                  Logout
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Mobile Menu Button */}

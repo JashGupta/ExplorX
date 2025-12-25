@@ -104,8 +104,12 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 backdrop-blur-sm pt-20">
-      <div className="relative w-[90%] max-w-3xl bg-white/40 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-2xl p-6 md:p-10 animate-fadeIn">
+    <div
+    onClick={() => setShowEditUserDetails(false)}
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 backdrop-blur-sm pt-20">
+      <div
+      onClick={(e) => e.stopPropagation()}
+      className="relative w-[90%] max-w-3xl bg-white/40 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-2xl p-6 md:p-10 animate-fadeIn">
         {/* Close Button */}
         <button
           onClick={() => setShowEditUserDetails(false)}

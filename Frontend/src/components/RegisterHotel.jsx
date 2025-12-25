@@ -141,8 +141,12 @@ const RegisterHotel = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm pt-20">
-      <div className="relative w-full max-w-5xl bg-white/20 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-2xl p-6 md:p-8 text-white overflow-y-auto max-h-[85vh]">
+    <div
+    onClick={() => setShowHotelReg(false)}
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm pt-20">
+      <div
+      onClick={(e) => e.stopPropagation()}
+      className="relative w-full max-w-5xl bg-white/20 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-2xl p-6 md:p-8 text-white overflow-y-auto max-h-[85vh]">
         {/* Close Button */}
         <button
           onClick={() => setShowHotelReg(false)}

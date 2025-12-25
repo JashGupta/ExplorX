@@ -19,7 +19,7 @@ const Hero = () => {
           Explore more, worry less with ExplorX.
         </h1>
         <p className="text-base sm:text-lg md:text-2xl mt-3 mb-8 max-w-2xl">
-          Plan your dream trip with curated destinations, exclusive offers, and smooth bookings.
+          Plan your dream trip with curated Hotels, exclusive offers, and smooth bookings.
         </p>
 
         {/* Form */}
