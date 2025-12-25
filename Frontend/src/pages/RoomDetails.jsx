@@ -297,16 +297,15 @@ const RoomDetails = () => {
           {/* ONE BUTTON — CHANGES LOGIC BASED ON STATE */}
           <button
             onClick={isAvailable === true ? handleBooking : checkAvailability}
-            disabled={!room.active}
             className={`w-full py-3 rounded-xl font-semibold shadow-lg transition text-white
         ${
-          room.active ? isAvailable === true
+          isAvailable === true
             ? "bg-emerald-800 hover:bg-emerald-900"
-            : "bg-emerald-700 hover:bg-emerald-800" : ""
-        } ${!room.active ? "bg-gray-400 cursor-not-allowed" : "cursor-pointer"}
+            : "bg-emerald-700 hover:bg-emerald-800"
+        }
       `}
           >
-            {room.active ? isAvailable === true ? "Book Now" : "Check Availability" : "Room Inactive"}
+            {isAvailable === true ? "Confirm Booking" : "Check Availability"}
           </button>
 
           {/* Availability Message */}

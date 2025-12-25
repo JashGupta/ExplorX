@@ -121,7 +121,7 @@ const AllHotels = () => {
                 <img
                   src={hotel.hotelImages[0].url}
                   alt={hotel.name}
-                  className="w-full md:w-2/3 h-60 overflow-hidden object-cover rounded-xl"
+                  className="w-full md:w-2/3 h-64 overflow-hidden object-cover rounded-xl"
                 />
                 {/* Premium Badge */}
                 {(!hotel.rating || hotel.rating === 0) &&
@@ -164,10 +164,28 @@ const AllHotels = () => {
                   </div>
                   <div>
                     <ul className="flex flex-wrap gap-2 mt-3 text-xs text-gray-700">
-                      {hotel.amenities.map((a, i) => (
+                      {/* Show first 2 amenities */}
+                      {hotel.amenities.slice(0, 2).map((a, i) => (
                         <li
                           key={i}
                           className="bg-gray-100 px-2 py-1 rounded-full"
+                        >
+                          {a}
+                        </li>
+                      ))}
+
+                      {/* "+N more" indicator for small screens */}
+                      {hotel.amenities.length > 2 && (
+                        <li className="px-1 py-1 text-gray-600 md:hidden">
+                          +{hotel.amenities.length - 2} more
+                        </li>
+                      )}
+
+                      {/* Show remaining amenities on md+ screens */}
+                      {hotel.amenities.slice(2).map((a, i) => (
+                        <li
+                          key={i + 2}
+                          className="hidden md:inline-block bg-gray-100 px-2 py-1 rounded-full"
                         >
                           {a}
                         </li>
@@ -176,7 +194,11 @@ const AllHotels = () => {
                   </div>
 
                   <span className="text-lg font-normal text-gray-700 mt-4">
-                    Starting from  <span className="font-bold text-gray-900">₹{hotel.startingPrice}</span> /night
+                    Starting from{" "}
+                    <span className="font-bold text-gray-900">
+                      ₹{hotel.startingPrice}
+                    </span>{" "}
+                    /night
                   </span>
                 </div>
               </div>
