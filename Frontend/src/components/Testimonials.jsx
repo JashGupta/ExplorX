@@ -69,12 +69,12 @@ const Testimonials = () => {
             <div className="flex flex-col items-center px-5 py-4 relative">
               <img
                 className="h-24 w-24 absolute -top-14 rounded-full object-cover"
-                src="person-3.jpg"
+                src="person-4.jpg"
                 alt="userImage3"
               />
               <div className="pt-8 text-center">
-                <h1 className="text-lg font-medium text-gray-800">Iron Man</h1>
-                <p className="text-gray-800/80">Mechanic</p>
+                <h1 className="text-lg font-medium text-gray-800">Neeraj Pepsu</h1>
+                <p className="text-gray-800/80">Dil me Base</p>
               </div>
             </div>
             <p className="text-gray-500 px-6 text-center">
